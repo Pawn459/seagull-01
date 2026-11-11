@@ -1436,5 +1436,133 @@
   }
 })();
 </script>
+  <style>
+  /* ปรับโครงสร้างกล่องซ้ายล่างให้แยกเป็น 2 การ์ดทรงปาดมุมเหมือนต้นฉบับ */
+  .env-box {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    display: flex !important;
+    gap: 10px !important;
+    height: 100% !important;
+  }
+
+  .atto-env-card {
+    position: relative;
+    background: linear-gradient(145deg, #0e1117 0%, #0a0c10 100%);
+    border: 1px solid #1e232d;
+    border-radius: 10px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 4px 14px 0 12px;
+    overflow: hidden;
+    clip-path: polygon(
+      0 0,
+      calc(100% - 12px) 0,
+      100% 12px,
+      100% 100%,
+      12px 100%,
+      0 calc(100% - 12px)
+    );
+    box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+  }
+
+  .atto-compass-card {
+    flex: 0.85;
+    gap: 12px;
+  }
+
+  .atto-weather-card {
+    flex: 1.35;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* แถบไฟสีแดงด้านบนซ้ายของแต่ละกล่อง */
+  .atto-env-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 52%;
+    height: 3.5px;
+    background: #ef4444;
+    border-radius: 0 2px 2px 0;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  }
+
+  /* วงเข็มทิศพร้อมตัวอักษร N E S W */
+  .atto-compass-dial {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #07090c;
+    border: 1px solid #262c3a;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.8);
+  }
+
+  .atto-dir {
+    position: absolute;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 7px;
+    font-weight: 700;
+    color: #6b7280;
+    line-height: 1;
+  }
+  .atto-dir.n { top: 3px; left: 50%; transform: translateX(-50%); color: #ef4444; font-weight: 800; }
+  .atto-dir.s { bottom: 3px; left: 50%; transform: translateX(-50%); }
+  .atto-dir.w { left: 3px; top: 50%; transform: translateY(-50%); }
+  .atto-dir.e { right: 3px; top: 50%; transform: translateY(-50%); }
+
+  .atto-needle-wrap {
+    width: 12px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-out;
+  }
+
+  .atto-label {
+    font-size: 11px;
+    color: #9ca3af;
+    line-height: 1.1;
+    margin-bottom: 2px;
+    white-space: nowrap;
+  }
+
+  .atto-val-white {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 17px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  .atto-val-pm {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: #10b981;
+    line-height: 1;
+  }
+
+  .atto-weather-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .atto-cloud-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    filter: drop-shadow(0
 </body>
 </html>
