@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>SEAGULL1-ATTO1</title>
+  <title>ATTO1 · SPORT</title>
 
   <!-- Google Fonts: Orbitron (ตัวเลขดิจิทัล) & Kanit (ภาษาไทย) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,11 +49,6 @@
       gap: 10px;
     }
 
-    .digital {
-      font-family: 'Orbitron', sans-serif;
-      letter-spacing: 0.5px;
-    }
-
     /* ===== TOP HEADER ===== */
     .top-bar {
       display: flex;
@@ -70,7 +65,6 @@
       font-size: 20px;
       letter-spacing: 1px;
       white-space: nowrap;
-      cursor: pointer;
     }
 
     .brand-title .red {
@@ -145,6 +139,12 @@
       overflow: hidden;
     }
 
+    .panel-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .panel-title {
       font-family: 'Orbitron', sans-serif;
       font-size: 11px;
@@ -152,6 +152,12 @@
       color: var(--text-muted);
       letter-spacing: 1.5px;
       text-transform: uppercase;
+    }
+
+    .station-status {
+      font-size: 11px;
+      color: var(--accent-blue);
+      font-weight: 500;
     }
 
     /* ===== LEFT PANEL: SPEEDOMETER ===== */
@@ -255,7 +261,6 @@
       background: #090b0e;
     }
 
-    /* ปรับสีแผนที่ให้เป็นโหมดมืดเหมือนต้นฉบับ */
     .leaflet-tile-pane {
       filter: invert(100%) hue-rotate(180deg) brightness(92%) contrast(92%);
     }
@@ -302,6 +307,27 @@
       border: 2px solid #ffffff;
       border-radius: 50%;
       box-shadow: 0 0 14px #38bdf8;
+    }
+
+    .ev-pin {
+      background: #11141a;
+      border: 1.5px solid #facc15;
+      color: #facc15;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      box-shadow: 0 0 8px rgba(250, 204, 21, 0.45);
+      transition: transform 0.15s ease;
+    }
+
+    .ev-pin:hover {
+      transform: scale(1.2);
+      background: #facc15;
+      color: #11141a;
     }
 
     /* ===== RIGHT COLUMN ===== */
@@ -369,17 +395,28 @@
       flex-direction: column;
       gap: 2px;
       flex: 1;
+      padding-right: 2px;
+    }
+
+    .stations-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .stations-list::-webkit-scrollbar-thumb {
+      background: #262c3a;
+      border-radius: 4px;
     }
 
     .station-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 9px 8px;
+      padding: 8px 8px;
       border-bottom: 1px solid #161a22;
       cursor: pointer;
       border-radius: 6px;
       transition: background 0.15s;
+      flex-shrink: 0;
     }
 
     .station-row:hover, .station-row.active {
@@ -406,7 +443,7 @@
 
     .station-dist {
       font-family: 'Orbitron', sans-serif;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--accent-blue);
       white-space: nowrap;
@@ -583,8 +620,8 @@
 
   <!-- TOP BAR -->
   <header class="top-bar">
-    <div class="brand-title" title="คลิกเพื่อแก้ไขชื่อได้ในโค้ด">
-      SEAGULL<span class="red">1</span> · PREMIUM
+    <div class="brand-title">
+      ATTO<span class="red">1</span> · SPORT
     </div>
     <div class="header-line"></div>
     <div class="header-right">
@@ -678,7 +715,10 @@
       </section>
 
       <section class="panel stations-panel">
-        <div class="panel-title">สถานีชาร์จใกล้</div>
+        <div class="panel-header-row">
+          <div class="panel-title">สถานีชาร์จใกล้</div>
+          <div class="station-status" id="stationStatus">กำลังโหลด...</div>
+        </div>
         <div class="stations-list" id="stationsList"></div>
       </section>
     </div>
@@ -687,7 +727,6 @@
 
   <!-- BOTTOM BAR -->
   <footer class="bottom-bar">
-    <!-- Compass & Weather -->
     <div class="env-box">
       <div class="env-item">
         <div class="compass-circle">
@@ -714,7 +753,6 @@
       </div>
     </div>
 
-    <!-- Sound & Engine Controls -->
     <div class="audio-controls">
       <button class="btn-dark btn-sound" id="soundBtn">
         <span>🔊</span> <span id="soundBtnText">เสียง</span>
@@ -732,7 +770,6 @@
       </div>
     </div>
 
-    <!-- Reset Button -->
     <button class="btn-dark" id="resetBtn">↺ รีเซ็ต</button>
   </footer>
 
@@ -782,15 +819,16 @@
     updateClock();
     setInterval(updateClock, 1000);
 
-    // ===== 3. แผนที่เริ่มต้นที่ประเทศไทย (รังสิต ปทุมธานี) =====
+    // ===== 3. แผนที่เริ่มต้นที่ประเทศไทย =====
     let currentLat = 13.9892;
     let currentLng = 100.6177;
     let autoFollow = true;
+    let selectedStationId = null;
 
     const map = L.map('map', {
       zoomControl: false,
       attributionControl: true
-    }).setView([currentLat, currentLng], 15);
+    }).setView([currentLat, currentLng], 12);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
@@ -803,7 +841,7 @@
       iconAnchor: [8, 8]
     });
 
-    const carMarker = L.marker([currentLat, currentLng], { icon: carIcon }).addTo(map);
+    const carMarker = L.marker([currentLat, currentLng], { icon: carIcon, zIndexOffset: 1000 }).addTo(map);
     const stationLayer = L.layerGroup().addTo(map);
     let routeLine = null;
 
@@ -811,11 +849,51 @@
 
     document.getElementById('followBtn').addEventListener('click', () => {
       autoFollow = true;
+      selectedStationId = null;
       if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
-      map.flyTo([currentLat, currentLng], 16, { animate: true, duration: 0.8 });
+      map.flyTo([currentLat, currentLng], 14, { animate: true, duration: 0.8 });
     });
 
-    // ===== 4. ระบบสถานีชาร์จใกล้เคียง (คลิกแล้วเลื่อนแผนที่ + นำทาง) =====
+    // ===== 4. ระบบสถานีชาร์จแบบ PlugShare (โหลดเพิ่มตามการเลื่อน/ซูมแผนที่) =====
+    const stationStore = new Map(); // เก็บข้อมูลสถานีทั้งหมดที่ค้นพบ
+    const markerStore = new Map();  // เก็บหมุดบนแผนที่เพื่อไม่ให้ป๊อปอัปเด้งหลุด
+
+    // สถานีชาร์จหลักตั้งต้นทั่วไทย (แสดงทันทีแม้ซูมมุมกว้างระดับประเทศ/จังหวัด)
+    const seedStations = [
+      { id: 's1', name: 'PTT EV Station PluZ รังสิต', lat: 13.9912, lng: 100.6155 },
+      { id: 's2', name: 'EA Anywhere ฟิวเจอร์พาร์ค รังสิต', lat: 13.9888, lng: 100.6182 },
+      { id: 's3', name: 'PEA VOLTA ปทุมธานี', lat: 14.0195, lng: 100.5284 },
+      { id: 's4', name: 'Altervim โลตัส รังสิต', lat: 13.9825, lng: 100.6110 },
+      { id: 's5', name: 'PTT EV Station PluZ คลองหลวง', lat: 14.0652, lng: 100.6418 },
+      { id: 's6', name: 'PEA VOLTA มธ.ศูนย์รังสิต', lat: 14.0725, lng: 100.6015 },
+      { id: 's7', name: 'PTT EV Station PluZ นวนคร', lat: 14.1240, lng: 100.6180 },
+      { id: 's8', name: 'PEA VOLTA วังน้อย อยุธยา', lat: 14.2285, lng: 100.7210 },
+      { id: 's9', name: 'PTT EV Station PluZ บางปะอิน', lat: 14.2450, lng: 100.5880 },
+      { id: 's10', name: 'EA Anywhere เซ็นทรัล อยุธยา', lat: 14.3315, lng: 100.6118 },
+      { id: 's11', name: 'PEA VOLTA อยุธยา (สายเอเชีย)', lat: 14.3780, lng: 100.5920 },
+      { id: 's12', name: 'PTT EV Station PluZ อ่างทอง', lat: 14.5890, lng: 100.4610 },
+      { id: 's13', name: 'PEA VOLTA สิงห์บุรี', lat: 14.8850, lng: 100.4020 },
+      { id: 's14', name: 'PTT EV Station PluZ ดอนเมือง', lat: 13.9180, lng: 100.6010 },
+      { id: 's15', name: 'EA Anywhere แจ้งวัฒนะ', lat: 13.9040, lng: 100.5290 },
+      { id: 's16', name: 'PEA VOLTA ปากเกร็ด นนทบุรี', lat: 13.9120, lng: 100.4950 },
+      { id: 's17', name: 'Tesla Supercharger เซ็นทรัล เวสต์เกต', lat: 13.8770, lng: 100.4110 },
+      { id: 's18', name: 'PTT EV Station PluZ ราชพฤกษ์', lat: 13.8250, lng: 100.4480 },
+      { id: 's19', name: 'EA Anywhere สยามพารากอน', lat: 13.7466, lng: 100.5347 },
+      { id: 's20', name: 'Tesla Supercharger เซ็นทรัลเวิลด์', lat: 13.7465, lng: 100.5391 },
+      { id: 's21', name: 'PEA VOLTA บางนา-ตราด', lat: 13.6580, lng: 100.6780 },
+      { id: 's22', name: 'PTT EV Station PluZ สุวรรณภูมิ', lat: 13.7190, lng: 100.7510 },
+      { id: 's23', name: 'PEA VOLTA สมุทรสาคร (พระราม 2)', lat: 13.5620, lng: 100.2750 },
+      { id: 's24', name: 'PEA VOLTA นครปฐม', lat: 13.8140, lng: 100.0620 },
+      { id: 's25', name: 'PTT EV Station PluZ สระบุรี', lat: 14.5280, lng: 100.9120 },
+      { id: 's26', name: 'PEA VOLTA ปากช่อง โคราช', lat: 14.6820, lng: 101.4150 },
+      { id: 's27', name: 'PEA VOLTA นครราชสีมา', lat: 14.9799, lng: 102.0978 },
+      { id: 's28', name: 'PEA VOLTA ขอนแก่น', lat: 16.4322, lng: 102.8236 },
+      { id: 's29', name: 'PTT EV Station PluZ สกลนคร', lat: 17.1610, lng: 104.1420 },
+      { id: 's30', name: 'PEA VOLTA สกลนคร', lat: 17.1545, lng: 104.1348 },
+      { id: 's31', name: 'PTT EV Station PluZ ธัญบุรี คลอง 6', lat: 14.0315, lng: 100.7320 },
+      { id: 's32', name: 'Altervim ลำลูกกา คลอง 4', lat: 13.9325, lng: 100.6840 }
+    ];
+
     function getDistanceKm(lat1, lon1, lat2, lon2) {
       const R = 6371;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -826,25 +904,45 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    function renderStations(stations) {
-      const listEl = document.getElementById('stationsList');
-      listEl.innerHTML = '';
-      stationLayer.clearLayers();
+    function selectStation(st) {
+      selectedStationId = st.id;
+      autoFollow = false;
 
-      stations.forEach((st, idx) => {
+      document.querySelectorAll('.station-row').forEach(r => {
+        r.classList.toggle('active', r.dataset.id === st.id);
+      });
+
+      if (routeLine) map.removeLayer(routeLine);
+      routeLine = L.polyline([[currentLat, currentLng], [st.lat, st.lng]], {
+        color: '#38bdf8',
+        weight: 3,
+        dashArray: '6, 8'
+      }).addTo(map);
+
+      const targetZoom = Math.max(map.getZoom(), 14);
+      map.flyTo([st.lat, st.lng], targetZoom, { animate: true, duration: 0.9 });
+
+      const marker = markerStore.get(st.id);
+      if (marker) marker.openPopup();
+    }
+
+    function addStationToMap(st) {
+      if (stationStore.has(st.id)) return;
+      stationStore.set(st.id, st);
+
+      const stIcon = L.divIcon({
+        className: '',
+        html: `<div class="ev-pin">⚡</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      const marker = L.marker([st.lat, st.lng], { icon: stIcon }).addTo(stationLayer);
+
+      marker.on('click', () => {
         const dist = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
-
-        // หมุดสถานีบนแผนที่
-        const stIcon = L.divIcon({
-          className: '',
-          html: `<div style="background:#11141a;border:1.5px solid #facc15;color:#facc15;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 8px rgba(250,204,21,0.5);">⚡</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
-        });
-
-        const marker = L.marker([st.lat, st.lng], { icon: stIcon }).addTo(stationLayer);
         marker.bindPopup(`
-          <div style="font-family:'Kanit',sans-serif;color:#111;min-width:165px;">
+          <div style="font-family:'Kanit',sans-serif;color:#111;min-width:175px;">
             <div style="font-weight:600;font-size:14px;">⚡ ${st.name}</div>
             <div style="color:#0284c7;font-size:12px;margin:2px 0 6px;">ห่างจากรถ ${dist} km</div>
             <a href="https://www.google.com/maps/dir/?api=1&destination=${st.lat},${st.lng}" target="_blank"
@@ -852,47 +950,124 @@
                🗺️ นำทาง Google Maps
             </a>
           </div>
-        `);
+        `).openPopup();
 
-        // รายการด้านขวา
+        selectedStationId = st.id;
+        autoFollow = false;
+        if (routeLine) map.removeLayer(routeLine);
+        routeLine = L.polyline([[currentLat, currentLng], [st.lat, st.lng]], {
+          color: '#38bdf8',
+          weight: 3,
+          dashArray: '6, 8'
+        }).addTo(map);
+      });
+
+      markerStore.set(st.id, marker);
+    }
+
+    function refreshVisibleStationList() {
+      const bounds = map.getBounds();
+      const allStations = Array.from(stationStore.values());
+
+      // คัดสถานีที่อยู่ในกรอบแผนที่ปัจจุบัน (หากซูมเจาะลึกแล้วไม่เจอ ให้ดึงสถานีที่ใกล้ศูนย์กลางแผนที่สุดมาแสดง)
+      let inView = allStations.filter(st => bounds.contains([st.lat, st.lng]));
+      if (inView.length < 4) {
+        const center = map.getCenter();
+        inView = allStations
+          .slice()
+          .sort((a, b) => getDistanceKm(center.lat, center.lng, a.lat, a.lng) - getDistanceKm(center.lat, center.lng, b.lat, b.lng))
+          .slice(0, 12);
+      }
+
+      // เรียงตามระยะห่างจากตำแหน่งรถ
+      inView.sort((a, b) => getDistanceKm(currentLat, currentLng, a.lat, a.lng) - getDistanceKm(currentLat, currentLng, b.lat, b.lng));
+
+      const listEl = document.getElementById('stationsList');
+      listEl.innerHTML = '';
+
+      inView.slice(0, 35).forEach(st => {
+        const dist = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
         const row = document.createElement('div');
-        row.className = 'station-row';
+        row.className = 'station-row' + (st.id === selectedStationId ? ' active' : '');
+        row.dataset.id = st.id;
         row.innerHTML = `
           <div class="station-name"><span class="bolt-icon">⚡</span> ${st.name}</div>
           <div class="station-dist">${dist}km</div>
         `;
-
         row.addEventListener('click', () => {
-          document.querySelectorAll('.station-row').forEach(r => r.classList.remove('active'));
-          row.classList.add('active');
-          autoFollow = false;
-
-          if (routeLine) map.removeLayer(routeLine);
-          routeLine = L.polyline([[currentLat, currentLng], [st.lat, st.lng]], {
-            color: '#38bdf8',
-            weight: 3,
-            dashArray: '6, 8'
-          }).addTo(map);
-
-          map.flyTo([st.lat, st.lng], 16, { animate: true, duration: 1.0 });
-          marker.openPopup();
+          const distNow = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
+          const m = markerStore.get(st.id);
+          if (m) {
+            m.bindPopup(`
+              <div style="font-family:'Kanit',sans-serif;color:#111;min-width:175px;">
+                <div style="font-weight:600;font-size:14px;">⚡ ${st.name}</div>
+                <div style="color:#0284c7;font-size:12px;margin:2px 0 6px;">ห่างจากรถ ${distNow} km</div>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${st.lat},${st.lng}" target="_blank"
+                   style="display:inline-block;background:#0284c7;color:#fff;text-decoration:none;padding:4px 10px;border-radius:5px;font-size:12px;">
+                   🗺️ นำทาง Google Maps
+                </a>
+              </div>
+            `);
+          }
+          selectStation(st);
         });
-
         listEl.appendChild(row);
       });
+
+      document.getElementById('stationStatus').textContent = `ในแผนที่ ${inView.length} จุด`;
     }
 
-    function loadDefaultStationsAround(lat, lng) {
-      const defaults = [
-        { name: 'PTT EV Station PluZ', lat: lat + 0.012, lng: lng + 0.006 },
-        { name: 'EA Anywhere Charging', lat: lat - 0.016, lng: lng + 0.014 },
-        { name: 'PEA VOLTA Station', lat: lat + 0.022, lng: lng - 0.015 },
-        { name: 'Altervim SuperCharge', lat: lat - 0.025, lng: lng - 0.018 }
-      ];
-      renderStations(defaults);
+    // ดึงข้อมูลสถานีชาร์จจริงจาก OpenStreetMap Overpass API เมื่อเลื่อนหรือซูมแผนที่
+    let fetchTimer = null;
+    async function fetchStationsInView() {
+      const bounds = map.getBounds();
+      const s = bounds.getSouth(), w = bounds.getWest(), n = bounds.getNorth(), e = bounds.getEast();
+
+      // จำกัดกรอบค้นหาไม่ให้กว้างเกิน 2.5 องศาต่อครั้งเพื่อความรวดเร็ว
+      if ((n - s) > 2.5 || (e - w) > 2.5) {
+        refreshVisibleStationList();
+        return;
+      }
+
+      document.getElementById('stationStatus').textContent = 'กำลังค้นหาเพิ่ม...';
+      const query = `[out:json][timeout:10];(node["amenity"="charging_station"](${s},${w},${n},${e});way["amenity"="charging_station"](${s},${w},${n},${e}););out center 80;`;
+
+      try {
+        const res = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query));
+        const data = await res.json();
+        if (data && data.elements) {
+          data.elements.forEach(el => {
+            const lat = el.lat || (el.center && el.center.lat);
+            const lng = el.lon || (el.center && el.center.lon);
+            if (!lat || !lng) return;
+
+            const tags = el.tags || {};
+            const name = tags['name:th'] || tags.name || tags.brand || tags.operator || 'สถานีชาร์จ EV';
+            addStationToMap({
+              id: 'osm_' + el.id,
+              name: name,
+              lat: lat,
+              lng: lng
+            });
+          });
+        }
+      } catch (err) {
+        // กรณีเน็ตตัดหรือเซิร์ฟเวอร์แผนที่หนาแน่น จะใช้สถานีที่โหลดสะสมไว้แล้วแสดงผลต่อทันที
+      }
+      refreshVisibleStationList();
     }
 
-    loadDefaultStationsAround(currentLat, currentLng);
+    // โหลดสถานีตั้งต้นทั้งหมดลงแผนที่ทันที
+    seedStations.forEach(addStationToMap);
+    refreshVisibleStationList();
+    fetchStationsInView();
+
+    // เมื่อเลื่อนแผนที่หรือซูมเสร็จ ให้ดึงสถานีชาร์จในพื้นที่นั้นขึ้นมาเพิ่มอัตโนมัติ
+    map.on('moveend', () => {
+      refreshVisibleStationList();
+      clearTimeout(fetchTimer);
+      fetchTimer = setTimeout(fetchStationsInView, 450);
+    });
 
     // ===== 5. ระบบคำนวณความเร็ว คะแนนขับขี่ และ GPS =====
     let maxSpeed = 0;
@@ -952,7 +1127,6 @@
       navigator.geolocation.watchPosition((pos) => {
         const { latitude, longitude, accuracy, speed, heading } = pos.coords;
 
-        // ป้องกันกรณีเปิดบนคอมพิวเตอร์ที่เน็ตชี้ IP ไปทวีปอื่น (นอกโซนเอเชียตะวันออกเฉียงใต้)
         const isInThailandRegion = (latitude >= 5 && latitude <= 21 && longitude >= 97 && longitude <= 106);
         if (isInThailandRegion) {
           currentLat = latitude;
@@ -976,7 +1150,7 @@
       }, { enableHighAccuracy: true, maximumAge: 1000 });
     }
 
-    // ===== 6. ระบบเสียงเครื่องยนต์จำลอง (Web Audio API) =====
+    // ===== 6. ระบบเสียงเครื่องยนต์จำลอง =====
     let audioCtx = null;
     let osc = null;
     let gainNode = null;
@@ -1009,7 +1183,6 @@
       }
     });
 
-    // ปุ่มปรับตัวเลขความเร็วแจ้งเตือน & ปุ่มรีเซ็ต
     document.getElementById('limitMinus').addEventListener('click', () => {
       speedLimit = Math.max(40, speedLimit - 10);
       document.getElementById('limitVal').textContent = speedLimit;
