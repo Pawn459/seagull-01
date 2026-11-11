@@ -397,5 +397,61 @@
   }, 1000);
 })();
 </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,700;1,800&display=swap" rel="stylesheet">
+<script>
+(function() {
+  setTimeout(() => {
+    // ค้นหากรอบหน้าปัดความเร็วจากคำว่า KM/H
+    const allEls = Array.from(document.querySelectorAll('*'));
+    const kmhEl = allEls.find(el => el.children.length === 0 && el.textContent.trim().toUpperCase() === 'KM/H');
+    if (!kmhEl) return;
+
+    const gaugeBox = kmhEl.parentElement;
+    gaugeBox.style.position = 'relative';
+    gaugeBox.style.border = 'none';
+    gaugeBox.style.boxShadow = 'none';
+    gaugeBox.style.background = 'transparent';
+
+    // ปรับฟอนต์ตัวเลขความเร็วตรงกลางให้เป็นดิจิทัลเหมือนต้นฉบับ
+    const speedNum = gaugeBox.children[0];
+    if (speedNum) {
+      speedNum.style.fontFamily = "'Orbitron', sans-serif";
+      speedNum.style.fontStyle = 'italic';
+      speedNum.style.fontSize = '64px';
+      speedNum.style.fontWeight = '800';
+      speedNum.style.lineHeight = '1';
+    }
+
+    // สร้างขีดมาตรวัดและตัวเลข 0 - 160 รอบวงกลม
+    const cx = 130, cy = 130, rOuter = 116, rInnerMaj = 104, rInnerMin = 110, rText = 88;
+    let ticks = '';
+    for (let s = 0; s <= 160; s += 10) {
+      const deg = -210 + (s / 160) * 240;
+      const rad = deg * Math.PI / 180;
+      const isMajor = s % 20 === 0;
+      const rIn = isMajor ? rInnerMaj : rInnerMin;
+      const x1 = cx + rOuter * Math.cos(rad), y1 = cy + rOuter * Math.sin(rad);
+      const x2 = cx + rIn * Math.cos(rad), y2 = cy + rIn * Math.sin(rad);
+      const color = s >= 140 ? '#ef4444' : '#4b5563';
+      const width = isMajor ? 2.5 : 1.5;
+      ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`;
+
+      if (isMajor) {
+        const tx = cx + rText * Math.cos(rad);
+        const ty = cy + rText * Math.sin(rad) + 4;
+        ticks += `<text x="${tx}" y="${ty}" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="10" font-weight="700" text-anchor="middle">${s}</text>`;
+      }
+    }
+
+    const svgWrap = document.createElement('div');
+    svgWrap.style.cssText = 'position:absolute;inset:-20px;pointer-events:none;display:flex;align-items:center;justify-content:center;';
+    svgWrap.innerHTML = `<svg viewBox="0 0 260 260" style="width:100%;height:100%;overflow:visible;">
+      <circle cx="130" cy="130" r="122" fill="none" stroke="#181b22" stroke-width="6"/>
+      ${ticks}
+    </svg>`;
+    gaugeBox.appendChild(svgWrap);
+  }, 500);
+})();
+</script>
 </body>
 </html>
