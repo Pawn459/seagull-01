@@ -1206,5 +1206,26 @@
       document.getElementById('hardTurnVal').textContent = '0';
     });
   </script>
+  <style>
+  body > *:not(header):not(main):not(footer):not(script):not(style):not(link) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+</style>
+<script>
+  (function removeNetlifyBadge() {
+    const clean = () => {
+      Array.from(document.body.children).forEach(el => {
+        if (!['HEADER', 'MAIN', 'FOOTER', 'SCRIPT', 'STYLE', 'LINK'].includes(el.tagName)) {
+          el.remove();
+        }
+      });
+    };
+    clean();
+    new MutationObserver(clean).observe(document.body, { childList: true });
+  })();
+</script>
 </body>
 </html>
