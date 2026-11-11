@@ -1,457 +1,1037 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Seagull-01 - Dashboard</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Rajdhani for sporty/tech look -->
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Leaflet CSS for Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>ATTO1 · SPORT</title>
 
-    <style>
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background-color: #0b0c10;
-            color: #ffffff;
-            user-select: none;
-        }
+  <!-- Google Fonts: Orbitron (ตัวเลขดิจิทัล) & Kanit (ภาษาไทย) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Orbitron:ital,wght@0,500;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
 
-        /* Neon Glow Utility Classes */
-        .glow-text-green { text-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
-        .glow-text-red { text-shadow: 0 0 15px rgba(255, 50, 50, 0.8); }
-        .glow-border-green { box-shadow: 0 0 15px rgba(0, 255, 0, 0.3); border-color: #00ff00; }
-        
-        /* Custom Scrollbar for hidden overflows */
-        ::-webkit-scrollbar { display: none; }
-        
-        /* Speedometer Clip Path */
-        .speed-arc {
-            border: 4px solid #333;
-            border-top-color: #ff3333;
-            border-radius: 50%;
-            border-bottom: transparent;
-        }
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-        /* Leaflet Dark Theme Adjustments */
-        .leaflet-layer,
-        .leaflet-control-zoom-in,
-        .leaflet-control-zoom-out,
-        .leaflet-control-attribution {
-            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
-        }
-        
-        /* Layout Fixes */
-        .panel {
-            background: linear-gradient(145deg, #16181f, #0f1015);
-            border: 1px solid #2a2d3a;
-        }
-    </style>
+  <style>
+    :root {
+      --bg-main: #060709;
+      --bg-card: #0c0e12;
+      --bg-subcard: #11141a;
+      --border-color: #1e232d;
+      --text-main: #f3f4f6;
+      --text-muted: #6b7280;
+      --accent-red: #ef4444;
+      --accent-orange: #f97316;
+      --accent-green: #10b981;
+      --accent-blue: #38bdf8;
+      --accent-yellow: #facc15;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Kanit', sans-serif;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 10px 14px;
+      gap: 10px;
+    }
+
+    .digital {
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===== TOP HEADER ===== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-family: 'Orbitron', sans-serif;
+      font-style: italic;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .brand-title .red {
+      color: var(--accent-red);
+    }
+
+    .header-line {
+      flex: 1;
+      height: 2px;
+      margin: 0 20px;
+      background: linear-gradient(90deg, #dc2626 0%, #991b1b 50%, #dc2626 100%);
+      opacity: 0.85;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      white-space: nowrap;
+    }
+
+    .gps-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .gps-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .clock-box {
+      text-align: right;
+      line-height: 1.05;
+    }
+
+    .clock-time {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .clock-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ===== MAIN 3-COLUMN GRID ===== */
+    .main-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1fr;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* ===== LEFT PANEL: SPEEDOMETER ===== */
+    .speed-panel {
+      justify-content: space-between;
+    }
+
+    .gauge-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .gauge-wrapper {
+      width: 260px;
+      height: 260px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .gauge-center-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 10px;
+    }
+
+    .speed-value {
+      font-family: 'Orbitron', sans-serif;
+      font-style: italic;
+      font-size: 68px;
+      font-weight: 800;
+      line-height: 0.95;
+      color: #ffffff;
+    }
+
+    .speed-unit {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      margin-top: 6px;
+    }
+
+    .accel-value {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-orange);
+      margin-top: 8px;
+    }
+
+    .sub-cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .sub-card {
+      background-color: var(--bg-subcard);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .sub-card-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .sub-card-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-top: 2px;
+    }
+
+    /* ===== CENTER PANEL: LIVE MAP ===== */
+    .map-panel {
+      padding: 0;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      background: #090b0e;
+    }
+
+    /* ปรับสีแผนที่ให้เป็นโหมดมืดเหมือนต้นฉบับ */
+    .leaflet-tile-pane {
+      filter: invert(100%) hue-rotate(180deg) brightness(92%) contrast(92%);
+    }
+
+    .map-overlay-title {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      z-index: 500;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #e5e7eb;
+      letter-spacing: 1.5px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+      pointer-events: none;
+    }
+
+    .follow-btn {
+      position: absolute;
+      bottom: 22px;
+      right: 12px;
+      z-index: 500;
+      background: rgba(12, 14, 18, 0.9);
+      color: #ffffff;
+      border: 1px solid #2e3646;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-family: 'Kanit', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .follow-btn:hover {
+      border-color: var(--accent-blue);
+    }
+
+    .car-dot {
+      width: 16px;
+      height: 16px;
+      background: #38bdf8;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 14px #38bdf8;
+    }
+
+    /* ===== RIGHT COLUMN ===== */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+
+    .score-panel {
+      flex: 0.95;
+      justify-content: space-between;
+    }
+
+    .score-display {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 6px 0;
+    }
+
+    .score-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 54px;
+      font-weight: 800;
+      color: var(--accent-green);
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 15px;
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+
+    .score-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #181c24;
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .score-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: var(--accent-green);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    .stations-panel {
+      flex: 1.05;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .stations-list {
+      margin-top: 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .station-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 8px;
+      border-bottom: 1px solid #161a22;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+
+    .station-row:hover, .station-row.active {
+      background-color: #161b24;
+    }
+
+    .station-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #e5e7eb;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 72%;
+    }
+
+    .bolt-icon {
+      color: var(--accent-yellow);
+      font-size: 13px;
+    }
+
+    .station-dist {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      white-space: nowrap;
+    }
+
+    /* ===== BOTTOM BAR ===== */
+    .bottom-bar {
+      height: 54px;
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: 1fr 1.35fr 1fr;
+      gap: 10px;
+    }
+
+    .env-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      padding: 0 12px;
+      align-items: center;
+    }
+
+    .env-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      height: 100%;
+    }
+
+    .env-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 45px;
+      height: 2px;
+      background-color: var(--accent-red);
+    }
+
+    .compass-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #2e3646;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    .compass-needle {
+      font-size: 11px;
+      color: #ffffff;
+      transition: transform 0.2s ease;
+    }
+
+    .env-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      line-height: 1.1;
+    }
+
+    .env-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .pm-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+    }
+
+    .audio-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-dark {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: #ffffff;
+      border-radius: 10px;
+      height: 100%;
+      font-family: 'Kanit', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+
+    .btn-dark:hover {
+      border-color: #374151;
+    }
+
+    .btn-sound {
+      flex: 1;
+    }
+
+    .btn-sound.active {
+      border-color: var(--accent-red);
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .sound-select {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: #ffffff;
+      border-radius: 10px;
+      height: 100%;
+      padding: 0 12px;
+      font-family: 'Kanit', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .speed-limiter {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      height: 100%;
+      padding: 0 6px;
+      gap: 6px;
+    }
+
+    .limit-btn {
+      background: #161a22;
+      border: none;
+      color: #9ca3af;
+      width: 26px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .limit-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 34px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      body { overflow-y: auto; height: auto; }
+      .main-grid { grid-template-columns: 1fr; }
+      .map-panel { height: 340px; }
+      .bottom-bar { grid-template-columns: 1fr; height: auto; }
+      .env-box, .btn-dark, .sound-select, .speed-limiter { height: 48px; }
+    }
+  </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col p-4 gap-4">
+<body>
 
-    <!-- Header -->
-    <header class="flex justify-between items-center h-10 shrink-0 px-2">
-        <div class="flex items-center gap-4">
-            <h1 class="text-2xl font-bold italic tracking-widest text-white">
-                SEAGULL1 - ATTO1 <span class="text-red-500">· PREMIUM 380KM</span>
-            </h1>
-            <div class="h-1 w-32 bg-gradient-to-r from-red-500 to-transparent skew-x-12"></div>
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="brand-title" title="คลิกเพื่อแก้ไขชื่อได้ในโค้ด">
+      ATTO<span class="red">1</span> · SPORT
+    </div>
+    <div class="header-line"></div>
+    <div class="header-right">
+      <div class="gps-badge">
+        <span class="gps-dot" id="gpsDot"></span>
+        <span id="gpsText">GPS พร้อมใช้</span>
+      </div>
+      <div class="clock-box">
+        <div class="clock-time" id="clockTime">08:27</div>
+        <div class="clock-date" id="clockDate">พุธ 11 พ.ย.</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN 3 COLUMNS -->
+  <main class="main-grid">
+
+    <!-- LEFT: SPEEDOMETER -->
+    <section class="panel speed-panel">
+      <div class="panel-title">SPEED</div>
+
+      <div class="gauge-container">
+        <div class="gauge-wrapper">
+          <svg class="gauge-svg" viewBox="0 0 260 260" id="gaugeSvg">
+            <defs>
+              <radialGradient id="dialGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#151922" stop-opacity="0.9" />
+                <stop offset="75%" stop-color="#0d1017" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#0c0e12" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="130" cy="130" r="115" fill="url(#dialGrad)" />
+            <g id="gaugeTicks"></g>
+          </svg>
+          <div class="gauge-center-text">
+            <div class="speed-value" id="speedVal">0</div>
+            <div class="speed-unit">KM/H</div>
+            <div class="accel-value" id="accelVal">+0.00 m/s²</div>
+          </div>
         </div>
-        <div class="flex items-center gap-4 text-sm text-gray-400">
-            <span id="gps-status" class="flex items-center gap-1 text-green-400">
-                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                GPS Active
-            </span>
-            <div id="clock" class="text-2xl font-bold text-white tracking-widest">00:00</div>
+      </div>
+
+      <div class="sub-cards-3">
+        <div class="sub-card">
+          <div class="sub-card-label">MAX</div>
+          <div class="sub-card-val" id="maxSpeedVal">0</div>
         </div>
-    </header>
-
-    <!-- Main Content (3 Columns) -->
-    <main class="flex-1 flex gap-4 min-h-0">
-        
-        <!-- Left Column: Speedometer -->
-        <div class="panel w-1/3 rounded-2xl p-6 flex flex-col relative">
-            <h2 class="text-gray-400 font-semibold tracking-wider text-sm">SPEED</h2>
-            
-            <div class="flex-1 flex flex-col items-center justify-center relative">
-                <!-- Decorative Arc -->
-                <div class="absolute w-64 h-64 speed-arc opacity-50"></div>
-                
-                <div class="text-center z-10">
-                    <div id="speed-value" class="text-8xl font-bold italic leading-none glow-text-white">0</div>
-                    <div class="text-xl text-gray-400 tracking-[0.2em] mt-2">KM/H</div>
-                </div>
-                
-                <div id="accel-value" class="mt-8 text-red-500 font-bold tracking-widest glow-text-red">
-                    +0.00 m/s²
-                </div>
-            </div>
-
-            <!-- Bottom Stats -->
-            <div class="flex gap-2 w-full mt-auto">
-                <div class="bg-black/50 p-2 rounded-lg flex-1 border border-gray-800">
-                    <div class="text-xs text-gray-500">MAX</div>
-                    <div class="text-lg font-bold">120</div>
-                </div>
-                <div class="bg-black/50 p-2 rounded-lg flex-1 border border-gray-800">
-                    <div class="text-xs text-gray-500">0-100</div>
-                    <div class="text-lg font-bold">--</div>
-                </div>
-                <div class="bg-black/50 p-2 rounded-lg flex-1 border border-gray-800">
-                    <div class="text-xs text-gray-500">BEST</div>
-                    <div class="text-lg font-bold">--</div>
-                </div>
-            </div>
+        <div class="sub-card">
+          <div class="sub-card-label">0-100</div>
+          <div class="sub-card-val" id="zeroToHundredVal">--</div>
         </div>
-
-        <!-- Middle Column: Live Map -->
-        <div class="panel w-1/3 rounded-2xl overflow-hidden relative border border-gray-700">
-            <div class="absolute top-4 left-4 z-[400] text-gray-200 font-semibold tracking-wider text-sm bg-black/60 px-3 py-1 rounded-md backdrop-blur-sm">
-                LIVE MAP
-            </div>
-            <!-- Leaflet Map Container -->
-            <div id="map" class="w-full h-full bg-gray-900"></div>
-            
-            <button id="center-map-btn" class="absolute bottom-4 right-4 z-[400] bg-gray-800/80 hover:bg-gray-700 border border-gray-600 text-white px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-sm transition">
-                ◎ ศูนย์กลาง
-            </button>
+        <div class="sub-card">
+          <div class="sub-card-label">BEST</div>
+          <div class="sub-card-val" id="bestTimeVal">--</div>
         </div>
+      </div>
+    </section>
 
-        <!-- Right Column: Info & Score -->
-        <div class="panel w-1/3 rounded-2xl p-6 flex flex-col gap-6">
-            
-            <!-- Drive Score -->
-            <div>
-                <h2 class="text-gray-400 font-semibold tracking-wider text-sm mb-2">DRIVE SCORE</h2>
-                <div class="flex items-end gap-2">
-                    <div class="text-7xl font-bold text-[#00ff00] glow-text-green leading-none">100</div>
-                    <div class="text-[#00ff00] font-bold text-xl mb-1">นุ่มนวล</div>
-                </div>
-                <div class="w-full h-2 bg-gray-800 rounded-full mt-4 overflow-hidden">
-                    <div class="h-full bg-[#00ff00] glow-border-green w-full"></div>
-                </div>
-            </div>
+    <!-- CENTER: LIVE MAP -->
+    <section class="panel map-panel">
+      <div class="map-overlay-title">LIVE MAP</div>
+      <div id="map"></div>
+      <button class="follow-btn" id="followBtn">◎ ตามรถ</button>
+    </section>
 
-            <!-- G-Force Indicators -->
-            <div class="flex gap-2">
-                <div class="bg-black/40 flex-1 p-3 rounded-xl border border-gray-800 text-center">
-                    <div class="text-xs text-gray-500">เร่งแรง</div>
-                    <div class="text-lg font-bold text-white">0</div>
-                </div>
-                <div class="bg-black/40 flex-1 p-3 rounded-xl border border-gray-800 text-center">
-                    <div class="text-xs text-gray-500">เบรกแรง</div>
-                    <div class="text-lg font-bold text-white">0</div>
-                </div>
-                <div class="bg-black/40 flex-1 p-3 rounded-xl border border-gray-800 text-center">
-                    <div class="text-xs text-gray-500">เลี้ยวแรง</div>
-                    <div class="text-lg font-bold text-white">0</div>
-                </div>
-            </div>
-
-            <!-- Nearby Stations -->
-            <div class="flex-1 bg-black/40 rounded-xl border border-gray-800 p-4 flex flex-col">
-                <h2 class="text-gray-400 font-semibold tracking-wider text-sm mb-4">สถานีชาร์จใกล้เคียง</h2>
-                <div class="flex flex-col gap-3 overflow-y-auto">
-                    <!-- Dummy Data -->
-                    <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
-                        <div class="flex items-center gap-2">
-                            <span class="text-orange-400">⚡</span>
-                            <span class="font-semibold text-gray-200">PEA VOLTA - ปตท.</span>
-                        </div>
-                        <span class="text-cyan-400 font-bold">2.4 km</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
-                        <div class="flex items-center gap-2">
-                            <span class="text-orange-400">⚡</span>
-                            <span class="font-semibold text-gray-200">EA Anywhere - ห้างสรรพสินค้า</span>
-                        </div>
-                        <span class="text-cyan-400 font-bold">5.1 km</span>
-                    </div>
-                    <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
-                        <div class="flex items-center gap-2">
-                            <span class="text-orange-400">⚡</span>
-                            <span class="font-semibold text-gray-200">Tesla Supercharger</span>
-                        </div>
-                        <span class="text-cyan-400 font-bold">8.0 km</span>
-                    </div>
-                </div>
-            </div>
+    <!-- RIGHT: DRIVE SCORE & CHARGING STATIONS -->
+    <div class="right-col">
+      <section class="panel score-panel">
+        <div class="panel-title">DRIVE SCORE</div>
+        <div class="score-display">
+          <span class="score-number" id="scoreVal">100</span>
+          <span class="score-label" id="scoreText">นุ่มมาก</span>
         </div>
-
-    </main>
-
-    <!-- Bottom Bar (Controls) -->
-    <footer class="h-16 shrink-0 flex gap-4">
-        <!-- Weather / Nav -->
-        <div class="panel rounded-xl px-6 flex items-center gap-6 border border-gray-700 w-1/3">
-            <div class="text-center">
-                <div class="text-xs text-gray-500">ทิศทาง</div>
-                <div class="text-xl font-bold text-white">N <span class="text-sm text-gray-400">0°</span></div>
-            </div>
-            <div class="w-px h-8 bg-gray-700"></div>
-            <div class="flex items-center gap-2">
-                <span class="text-2xl">☁️</span>
-                <div>
-                    <div class="text-xs text-gray-500">PM 2.5</div>
-                    <div class="text-lg font-bold text-yellow-400">30</div>
-                </div>
-            </div>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" id="scoreBar"></div>
         </div>
-
-        <!-- Sound Simulator Control -->
-        <div class="flex-1 flex gap-2">
-            <button class="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 rounded-xl border-2 border-red-400/50 text-white font-bold text-xl flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,0,0,0.3)] transition">
-                🔊 เสียงเครื่องยนต์ (จำลอง)
-            </button>
-            <div class="panel rounded-xl flex items-center px-4 border border-gray-700">
-                <select class="bg-transparent text-white font-bold outline-none text-lg cursor-pointer">
-                    <option class="bg-gray-900">Lamborghini V12</option>
-                    <option class="bg-gray-900">Porsche Flat-6</option>
-                    <option class="bg-gray-900">V8 Muscle</option>
-                    <option class="bg-gray-900">Spaceship (EV)</option>
-                </select>
-            </div>
+        <div class="sub-cards-3">
+          <div class="sub-card">
+            <div class="sub-card-label">เร่งแรง</div>
+            <div class="sub-card-val" id="hardAccelVal">0</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-label">เบรกแรง</div>
+            <div class="sub-card-val" id="hardBrakeVal">0</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-label">เลี้ยวแรง</div>
+            <div class="sub-card-val" id="hardTurnVal">0</div>
+          </div>
         </div>
+      </section>
 
-        <button class="panel w-32 rounded-xl border border-gray-700 font-bold hover:bg-gray-800 transition">
-            รีเซ็ต
-        </button>
-    </footer>
+      <section class="panel stations-panel">
+        <div class="panel-title">สถานีชาร์จใกล้</div>
+        <div class="stations-list" id="stationsList"></div>
+      </section>
+    </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <script>
-        // --- 1. Clock System ---
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('clock').textContent = timeString;
+  </main>
+
+  <!-- BOTTOM BAR -->
+  <footer class="bottom-bar">
+    <!-- Compass & Weather -->
+    <div class="env-box">
+      <div class="env-item">
+        <div class="compass-circle">
+          <span class="compass-needle" id="compassNeedle">▲</span>
+        </div>
+        <div>
+          <div class="env-label">เข็มทิศ</div>
+          <div class="env-val" id="headingVal">--</div>
+        </div>
+      </div>
+
+      <div class="env-item" style="justify-content: space-between; padding-left: 8px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span style="font-size:16px;">☁️</span>
+          <div>
+            <div class="env-label" id="weatherDesc">เมฆมาก</div>
+            <div class="env-val" id="tempVal">31°</div>
+          </div>
+        </div>
+        <div>
+          <div class="env-label">PM2.5</div>
+          <div class="pm-val" id="pmVal">29</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sound & Engine Controls -->
+    <div class="audio-controls">
+      <button class="btn-dark btn-sound" id="soundBtn">
+        <span>🔊</span> <span id="soundBtnText">เสียง</span>
+      </button>
+      <select class="sound-select" id="engineSelect">
+        <option value="v12">Lamborghini V12</option>
+        <option value="v8">Ferrari V8</option>
+        <option value="gt3">Porsche Flat-6</option>
+        <option value="ev">Sport EV Boost</option>
+      </select>
+      <div class="speed-limiter">
+        <button class="limit-btn" id="limitMinus">-</button>
+        <span class="limit-val" id="limitVal">120</span>
+        <button class="limit-btn" id="limitPlus">+</button>
+      </div>
+    </div>
+
+    <!-- Reset Button -->
+    <button class="btn-dark" id="resetBtn">↺ รีเซ็ต</button>
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // ===== 1. สร้างขีดมาตรวัด 0 - 160 KM/H =====
+    (function drawGaugeTicks() {
+      const group = document.getElementById('gaugeTicks');
+      const cx = 130, cy = 130, rOuter = 112, rMaj = 100, rMin = 106, rText = 84;
+      let html = '';
+      for (let s = 0; s <= 160; s += 10) {
+        const deg = -210 + (s / 160) * 240;
+        const rad = (deg * Math.PI) / 180;
+        const isMaj = s % 20 === 0;
+        const rIn = isMaj ? rMaj : rMin;
+        const x1 = cx + rOuter * Math.cos(rad);
+        const y1 = cy + rOuter * Math.sin(rad);
+        const x2 = cx + rIn * Math.cos(rad);
+        const y2 = cy + rIn * Math.sin(rad);
+        const color = s >= 140 ? '#ef4444' : '#4b5563';
+        const width = isMaj ? 2.5 : 1.5;
+
+        html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" />`;
+
+        if (isMaj) {
+          const tx = cx + rText * Math.cos(rad);
+          const ty = cy + rText * Math.sin(rad) + 4;
+          html += `<text x="${tx}" y="${ty}" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="10" font-weight="700" text-anchor="middle">${s}</text>`;
         }
-        setInterval(updateClock, 1000);
-        updateClock();
+      }
+      group.innerHTML = html;
+    })();
 
-        // --- 2. Map System (Leaflet) ---
-        // Default coordinates (Bangkok/Rangsit area fallback)
-        let currentLat = 13.9892;
-        let currentLng = 100.6169;
-        
-        const map = L.map('map', {
-            zoomControl: false, // Hide default zoom controls for cleaner UI
-            attributionControl: false
-        }).setView([currentLat, currentLng], 15);
+    // ===== 2. นาฬิกาและวันที่ภาษาไทย =====
+    function updateClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clockTime').textContent = `${hh}:${mm}`;
 
-        // Load OpenStreetMap tiles (Inverted in CSS for Dark Mode)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(map);
+      const days = ['อา.', 'จ.', 'อ.', 'พุธ', 'พฤ.', 'ศ.', 'ส.'];
+      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      document.getElementById('clockDate').textContent = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
 
-        // Custom Marker for Car
-        const carIcon = L.divIcon({
-            className: 'car-marker',
-            html: `<div style="width: 20px; height: 20px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 15px #00ff00; border: 3px solid #000;"></div>`,
-            iconSize: [20, 20],
-            iconAnchor: [10, 10]
-        });
-        
-        let marker = L.marker([currentLat, currentLng], {icon: carIcon}).addTo(map);
+    // ===== 3. แผนที่เริ่มต้นที่ประเทศไทย (รังสิต ปทุมธานี) =====
+    let currentLat = 13.9892;
+    let currentLng = 100.6177;
+    let autoFollow = true;
 
-        document.getElementById('center-map-btn').addEventListener('click', () => {
-            map.setView([currentLat, currentLng], 16);
-        });
+    const map = L.map('map', {
+      zoomControl: false,
+      attributionControl: true
+    }).setView([currentLat, currentLng], 15);
 
-        // --- 3. Speed & GPS Tracking System ---
-        const speedElement = document.getElementById('speed-value');
-        const gpsStatus = document.getElementById('gps-status');
-        
-        let lastSpeed = 0;
-        
-        if ("geolocation" in navigator) {
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    // Update Map Position
-                    currentLat = position.coords.latitude;
-                    currentLng = position.coords.longitude;
-                    marker.setLatLng([currentLat, currentLng]);
-                    
-                    // Option to auto-pan map (disabled to allow user drag, user clicks 'center' to snap back)
-                    // map.panTo([currentLat, currentLng]);
-
-                    // Calculate Speed
-                    // position.coords.speed is in meters/second. Multiply by 3.6 for km/h
-                    let speedMps = position.coords.speed;
-                    
-                    if (speedMps === null || speedMps < 0.5) {
-                        speedMps = 0; // Filter out GPS noise when stationary
-                    }
-                    
-                    let speedKmh = Math.round(speedMps * 3.6);
-                    
-                    // Update UI
-                    speedElement.textContent = speedKmh;
-                    
-                    // Add glow effect if driving fast
-                    if(speedKmh > 80) {
-                        speedElement.classList.replace('glow-text-white', 'glow-text-red');
-                        speedElement.classList.add('text-red-500');
-                    } else {
-                        speedElement.classList.replace('glow-text-red', 'glow-text-white');
-                        speedElement.classList.remove('text-red-500');
-                    }
-                    
-                    gpsStatus.innerHTML = `<div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> GPS Active`;
-                    gpsStatus.className = "flex items-center gap-1 text-green-400";
-                },
-                (error) => {
-                    console.warn("GPS Error:", error.message);
-                    gpsStatus.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500"></div> No GPS Signal`;
-                    gpsStatus.className = "flex items-center gap-1 text-red-500";
-                    // Custom message handling instead of alert()
-                    const container = document.getElementById('gps-status');
-                    container.title = error.message; 
-                },
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 1000,
-                    timeout: 5000
-                }
-            );
-        } else {
-            gpsStatus.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500"></div> Not Supported`;
-            gpsStatus.className = "flex items-center gap-1 text-red-500";
-        }
-
-        // Handle Map resizing issues inside flex containers
-        window.addEventListener('resize', () => {
-            map.invalidateSize();
-        });
-        
-        // Initial setup for flex layout map calculation
-        setTimeout(() => {
-            map.invalidateSize();
-        }, 100);
-
-    </script>
-    <script>
-(function() {
-  let stationLayer = L.layerGroup().addTo(map);
-  let routeLine = null;
-  let carCenter = map.getCenter();
-
-  // อัปเดตจุดศูนย์กลางรถเมื่อแผนที่มีการขยับจาก GPS
-  map.on('locationfound', function(e) { carCenter = e.latlng; });
-
-  function focusStation(lat, lng, name, distText) {
-    if (typeof autoFollow !== 'undefined') autoFollow = false;
-    stationLayer.clearLayers();
-    if (routeLine) map.removeLayer(routeLine);
-
-    const base = (typeof currentLat !== 'undefined' && currentLat) ? [currentLat, currentLng] : [carCenter.lat, carCenter.lng];
-
-    // ลากเส้นประเชื่อมจากรถไปสถานีชาร์จ
-    routeLine = L.polyline([base, [lat, lng]], {
-      color: '#38bdf8', weight: 3, dashArray: '6, 8'
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
     }).addTo(map);
 
-    // ปักหมุดและเปิดป๊อปอัปนำทาง
-    const marker = L.marker([lat, lng]).addTo(stationLayer);
-    marker.bindPopup(
-      `<div style="color:#111;font-family:sans-serif;min-width:160px;">
-        <b>⚡ ${name}</b><br>
-        <span style="color:#0284c7;font-size:12px;">ระยะห่าง: ${distText}</span><br>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank"
-           style="display:inline-block;margin-top:6px;padding:4px 8px;background:#0284c7;color:#fff;text-decoration:none;border-radius:4px;font-size:12px;">
-           🗺️ นำทาง Google Maps
-        </a>
-      </div>`
-    ).openPopup();
+    const carIcon = L.divIcon({
+      className: '',
+      html: '<div class="car-dot"></div>',
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
 
-    map.flyTo([lat, lng], 16, { animate: true, duration: 1.2 });
-  }
+    const carMarker = L.marker([currentLat, currentLng], { icon: carIcon }).addTo(map);
+    const stationLayer = L.layerGroup().addTo(map);
+    let routeLine = null;
 
-  // ผูกคำสั่งคลิกให้กล่องสถานีชาร์จเดิมทั้ง 3 จุด
-  const offsets = [
-    { dLat: 0.012, dLng: 0.008, name: 'PEA VOLTA - ปตท.', dist: '2.4 km' },
-    { dLat: -0.018, dLng: 0.015, name: 'EA Anywhere - ห้างสรรพสินค้า', dist: '5.1 km' },
-    { dLat: 0.025, dLng: -0.020, name: 'Tesla Supercharger', dist: '8.0 km' }
-  ];
+    map.on('dragstart', () => { autoFollow = false; });
 
-  setTimeout(() => {
-    const allDivs = Array.from(document.querySelectorAll('div'));
-    offsets.forEach((st) => {
-      const box = allDivs.find(el => el.innerText && el.innerText.includes(st.name.split(' ')[0]) && el.innerText.includes('km') && el.children.length <= 3);
-      if (box) {
-        box.style.cursor = 'pointer';
-        box.onclick = () => {
-          const base = (typeof currentLat !== 'undefined' && currentLat) ? { lat: currentLat, lng: currentLng } : map.getCenter();
-          focusStation(base.lat + st.dLat, base.lng + st.dLng, st.name, st.dist);
-        };
+    document.getElementById('followBtn').addEventListener('click', () => {
+      autoFollow = true;
+      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+      map.flyTo([currentLat, currentLng], 16, { animate: true, duration: 0.8 });
+    });
+
+    // ===== 4. ระบบสถานีชาร์จใกล้เคียง (คลิกแล้วเลื่อนแผนที่ + นำทาง) =====
+    function getDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function renderStations(stations) {
+      const listEl = document.getElementById('stationsList');
+      listEl.innerHTML = '';
+      stationLayer.clearLayers();
+
+      stations.forEach((st, idx) => {
+        const dist = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
+
+        // หมุดสถานีบนแผนที่
+        const stIcon = L.divIcon({
+          className: '',
+          html: `<div style="background:#11141a;border:1.5px solid #facc15;color:#facc15;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;box-shadow:0 0 8px rgba(250,204,21,0.5);">⚡</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([st.lat, st.lng], { icon: stIcon }).addTo(stationLayer);
+        marker.bindPopup(`
+          <div style="font-family:'Kanit',sans-serif;color:#111;min-width:165px;">
+            <div style="font-weight:600;font-size:14px;">⚡ ${st.name}</div>
+            <div style="color:#0284c7;font-size:12px;margin:2px 0 6px;">ห่างจากรถ ${dist} km</div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${st.lat},${st.lng}" target="_blank"
+               style="display:inline-block;background:#0284c7;color:#fff;text-decoration:none;padding:4px 10px;border-radius:5px;font-size:12px;">
+               🗺️ นำทาง Google Maps
+            </a>
+          </div>
+        `);
+
+        // รายการด้านขวา
+        const row = document.createElement('div');
+        row.className = 'station-row';
+        row.innerHTML = `
+          <div class="station-name"><span class="bolt-icon">⚡</span> ${st.name}</div>
+          <div class="station-dist">${dist}km</div>
+        `;
+
+        row.addEventListener('click', () => {
+          document.querySelectorAll('.station-row').forEach(r => r.classList.remove('active'));
+          row.classList.add('active');
+          autoFollow = false;
+
+          if (routeLine) map.removeLayer(routeLine);
+          routeLine = L.polyline([[currentLat, currentLng], [st.lat, st.lng]], {
+            color: '#38bdf8',
+            weight: 3,
+            dashArray: '6, 8'
+          }).addTo(map);
+
+          map.flyTo([st.lat, st.lng], 16, { animate: true, duration: 1.0 });
+          marker.openPopup();
+        });
+
+        listEl.appendChild(row);
+      });
+    }
+
+    function loadDefaultStationsAround(lat, lng) {
+      const defaults = [
+        { name: 'PTT EV Station PluZ', lat: lat + 0.012, lng: lng + 0.006 },
+        { name: 'EA Anywhere Charging', lat: lat - 0.016, lng: lng + 0.014 },
+        { name: 'PEA VOLTA Station', lat: lat + 0.022, lng: lng - 0.015 },
+        { name: 'Altervim SuperCharge', lat: lat - 0.025, lng: lng - 0.018 }
+      ];
+      renderStations(defaults);
+    }
+
+    loadDefaultStationsAround(currentLat, currentLng);
+
+    // ===== 5. ระบบคำนวณความเร็ว คะแนนขับขี่ และ GPS =====
+    let maxSpeed = 0;
+    let driveScore = 100;
+    let hardAccel = 0, hardBrake = 0, hardTurn = 0;
+    let prevSpeedMps = 0, prevTime = Date.now(), prevHeading = null;
+    let speedLimit = 120;
+
+    function updateTelemetry(speedKmh, accelMps2, heading) {
+      const roundedSpeed = Math.max(0, Math.round(speedKmh));
+      document.getElementById('speedVal').textContent = roundedSpeed;
+
+      const sign = accelMps2 >= 0 ? '+' : '';
+      document.getElementById('accelVal').textContent = `${sign}${accelMps2.toFixed(2)} m/s²`;
+
+      if (roundedSpeed > maxSpeed) {
+        maxSpeed = roundedSpeed;
+        document.getElementById('maxSpeedVal').textContent = maxSpeed;
+      }
+
+      if (accelMps2 > 3.2) {
+        hardAccel++;
+        driveScore = Math.max(0, driveScore - 2);
+        document.getElementById('hardAccelVal').textContent = hardAccel;
+      } else if (accelMps2 < -3.5) {
+        hardBrake++;
+        driveScore = Math.max(0, driveScore - 2);
+        document.getElementById('hardBrakeVal').textContent = hardBrake;
+      }
+
+      if (heading !== null && !isNaN(heading)) {
+        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const dirText = dirs[Math.round(heading / 45) % 8];
+        document.getElementById('headingVal').textContent = `${dirText} ${Math.round(heading)}°`;
+        document.getElementById('compassNeedle').style.transform = `rotate(${heading}deg)`;
+
+        if (prevHeading !== null && roundedSpeed > 20) {
+          let diff = Math.abs(heading - prevHeading);
+          if (diff > 180) diff = 360 - diff;
+          if (diff > 35) {
+            hardTurn++;
+            driveScore = Math.max(0, driveScore - 2);
+            document.getElementById('hardTurnVal').textContent = hardTurn;
+          }
+        }
+        prevHeading = heading;
+      }
+
+      document.getElementById('scoreVal').textContent = driveScore;
+      document.getElementById('scoreBar').style.width = `${driveScore}%`;
+      document.getElementById('scoreText').textContent = driveScore >= 85 ? 'นุ่มมาก' : (driveScore >= 60 ? 'ปกติ' : 'ซิ่ง');
+
+      updateEnginePitch(roundedSpeed);
+    }
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition((pos) => {
+        const { latitude, longitude, accuracy, speed, heading } = pos.coords;
+
+        // ป้องกันกรณีเปิดบนคอมพิวเตอร์ที่เน็ตชี้ IP ไปทวีปอื่น (นอกโซนเอเชียตะวันออกเฉียงใต้)
+        const isInThailandRegion = (latitude >= 5 && latitude <= 21 && longitude >= 97 && longitude <= 106);
+        if (isInThailandRegion) {
+          currentLat = latitude;
+          currentLng = longitude;
+          carMarker.setLatLng([currentLat, currentLng]);
+          if (autoFollow) map.setView([currentLat, currentLng]);
+        }
+
+        document.getElementById('gpsText').textContent = `GPS ±${Math.round(accuracy)}m`;
+
+        const now = Date.now();
+        const dt = Math.max(0.5, (now - prevTime) / 1000);
+        const spdMps = speed || 0;
+        const accel = (spdMps - prevSpeedMps) / dt;
+        prevSpeedMps = spdMps;
+        prevTime = now;
+
+        updateTelemetry(spdMps * 3.6, accel, heading);
+      }, () => {
+        document.getElementById('gpsText').textContent = 'GPS รอสัญญาณ';
+      }, { enableHighAccuracy: true, maximumAge: 1000 });
+    }
+
+    // ===== 6. ระบบเสียงเครื่องยนต์จำลอง (Web Audio API) =====
+    let audioCtx = null;
+    let osc = null;
+    let gainNode = null;
+    let soundOn = false;
+
+    function updateEnginePitch(speedKmh) {
+      if (!soundOn || !osc || !audioCtx) return;
+      const type = document.getElementById('engineSelect').value;
+      const baseFreq = type === 'v12' ? 65 : (type === 'v8' ? 50 : (type === 'gt3' ? 58 : 110));
+      osc.frequency.setTargetAtTime(baseFreq + speedKmh * 2.2, audioCtx.currentTime, 0.1);
+    }
+
+    document.getElementById('soundBtn').addEventListener('click', function() {
+      soundOn = !soundOn;
+      this.classList.toggle('active', soundOn);
+      if (soundOn) {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        osc = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.value = 65;
+        gainNode.gain.value = 0.06;
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+      } else if (osc) {
+        osc.stop();
+        osc.disconnect();
+        osc = null;
       }
     });
-  }, 1000);
-})();
-</script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:ital,wght@0,700;1,800&display=swap" rel="stylesheet">
-<script>
-(function() {
-  setTimeout(() => {
-    // ค้นหากรอบหน้าปัดความเร็วจากคำว่า KM/H
-    const allEls = Array.from(document.querySelectorAll('*'));
-    const kmhEl = allEls.find(el => el.children.length === 0 && el.textContent.trim().toUpperCase() === 'KM/H');
-    if (!kmhEl) return;
 
-    const gaugeBox = kmhEl.parentElement;
-    gaugeBox.style.position = 'relative';
-    gaugeBox.style.border = 'none';
-    gaugeBox.style.boxShadow = 'none';
-    gaugeBox.style.background = 'transparent';
+    // ปุ่มปรับตัวเลขความเร็วแจ้งเตือน & ปุ่มรีเซ็ต
+    document.getElementById('limitMinus').addEventListener('click', () => {
+      speedLimit = Math.max(40, speedLimit - 10);
+      document.getElementById('limitVal').textContent = speedLimit;
+    });
+    document.getElementById('limitPlus').addEventListener('click', () => {
+      speedLimit = Math.min(200, speedLimit + 10);
+      document.getElementById('limitVal').textContent = speedLimit;
+    });
 
-    // ปรับฟอนต์ตัวเลขความเร็วตรงกลางให้เป็นดิจิทัลเหมือนต้นฉบับ
-    const speedNum = gaugeBox.children[0];
-    if (speedNum) {
-      speedNum.style.fontFamily = "'Orbitron', sans-serif";
-      speedNum.style.fontStyle = 'italic';
-      speedNum.style.fontSize = '64px';
-      speedNum.style.fontWeight = '800';
-      speedNum.style.lineHeight = '1';
-    }
-
-    // สร้างขีดมาตรวัดและตัวเลข 0 - 160 รอบวงกลม
-    const cx = 130, cy = 130, rOuter = 116, rInnerMaj = 104, rInnerMin = 110, rText = 88;
-    let ticks = '';
-    for (let s = 0; s <= 160; s += 10) {
-      const deg = -210 + (s / 160) * 240;
-      const rad = deg * Math.PI / 180;
-      const isMajor = s % 20 === 0;
-      const rIn = isMajor ? rInnerMaj : rInnerMin;
-      const x1 = cx + rOuter * Math.cos(rad), y1 = cy + rOuter * Math.sin(rad);
-      const x2 = cx + rIn * Math.cos(rad), y2 = cy + rIn * Math.sin(rad);
-      const color = s >= 140 ? '#ef4444' : '#4b5563';
-      const width = isMajor ? 2.5 : 1.5;
-      ticks += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round"/>`;
-
-      if (isMajor) {
-        const tx = cx + rText * Math.cos(rad);
-        const ty = cy + rText * Math.sin(rad) + 4;
-        ticks += `<text x="${tx}" y="${ty}" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="10" font-weight="700" text-anchor="middle">${s}</text>`;
-      }
-    }
-
-    const svgWrap = document.createElement('div');
-    svgWrap.style.cssText = 'position:absolute;inset:-20px;pointer-events:none;display:flex;align-items:center;justify-content:center;';
-    svgWrap.innerHTML = `<svg viewBox="0 0 260 260" style="width:100%;height:100%;overflow:visible;">
-      <circle cx="130" cy="130" r="122" fill="none" stroke="#181b22" stroke-width="6"/>
-      ${ticks}
-    </svg>`;
-    gaugeBox.appendChild(svgWrap);
-  }, 500);
-})();
-</script>
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      maxSpeed = 0;
+      driveScore = 100;
+      hardAccel = 0; hardBrake = 0; hardTurn = 0;
+      document.getElementById('maxSpeedVal').textContent = '0';
+      document.getElementById('zeroToHundredVal').textContent = '--';
+      document.getElementById('scoreVal').textContent = '100';
+      document.getElementById('scoreBar').style.width = '100%';
+      document.getElementById('scoreText').textContent = 'นุ่มมาก';
+      document.getElementById('hardAccelVal').textContent = '0';
+      document.getElementById('hardBrakeVal').textContent = '0';
+      document.getElementById('hardTurnVal').textContent = '0';
+    });
+  </script>
 </body>
 </html>
