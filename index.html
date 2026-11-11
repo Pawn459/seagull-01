@@ -727,17 +727,7 @@
 
   <!-- BOTTOM BAR -->
   <footer class="bottom-bar">
-    <div class="env-box">
-      <div class="env-item">
-        <div class="compass-circle">
-          <span class="compass-needle" id="compassNeedle">▲</span>
-        </div>
-        <div>
-          <div class="env-label">เข็มทิศ</div>
-          <div class="env-val" id="headingVal">--</div>
-        </div>
-      </div>
-
+    
       <div class="env-item" style="justify-content: space-between; padding-left: 8px;">
         <div style="display:flex; align-items:center; gap:6px;">
           <span style="font-size:16px;">☁️</span>
@@ -1438,232 +1428,48 @@
 </script>
 
 /*-------------------------------------------------------------------------------------------------------------*/
-  <style>
-  /* ขยายความสูงแถบล่างให้ได้สัดส่วนเดียวกับต้นฉบับ */
-  .bottom-bar {
-    height: 66px !important;
-  }
-
-  .env-box {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-    display: flex !important;
-    gap: 10px !important;
-    height: 100% !important;
-  }
-
-  /* กรอบนอกทำหน้าที่เป็นเส้นขอบ 1px รอบมุมปาดเฉียง */
-  .atto-card-wrap {
-    position: relative;
-    height: 100%;
-    background: #222834;
-    padding: 1px;
-    border-radius: 12px 0 12px 0;
-    clip-path: polygon(
-      0 0,
-      calc(100% - 14px) 0,
-      100% 14px,
-      100% 100%,
-      14px 100%,
-      0 calc(100% - 14px)
-    );
-  }
-
-  .atto-compass-wrap {
-    flex: 0.95;
-  }
-
-  .atto-weather-wrap {
-    flex: 1.35;
-  }
-
-  /* พื้นหลังการ์ดด้านใน */
-  .atto-card-inner {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(180deg, #11151d 0%, #0b0d13 100%);
-    border-radius: 11px 0 11px 0;
-    clip-path: polygon(
-      0 0,
-      calc(100% - 13.5px) 0,
-      100% 13.5px,
-      100% 100%,
-      13.5px 100%,
-      0 calc(100% - 13.5px)
-    );
-    display: flex;
-    align-items: center;
-    padding: 4px 16px 0 12px;
-    position: relative;
-  }
-
-  /* แถบไฟสีแดงมุมซ้ายบน */
-  .atto-red-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 48%;
-    height: 4px;
-    background: #ff3b47;
-    border-top-left-radius: 12px;
-    z-index: 5;
-  }
-
-  .atto-compass-inner {
-    gap: 14px;
-  }
-
-  .atto-weather-inner {
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .atto-compass-svg {
-    width: 46px;
-    height: 46px;
-    flex-shrink: 0;
-    display: block;
-  }
-
-  .atto-meta-label {
-    font-family: 'Kanit', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: #8b95a5;
-    line-height: 1.1;
-    margin-bottom: 4px;
-    white-space: nowrap;
-  }
-
-  .atto-heading-val {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 18px;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 2px;
-    line-height: 1;
-  }
-
-  .atto-temp-val {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 21px;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1;
-  }
-
-  .atto-pm-val {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: #22c55e;
-    line-height: 1;
-  }
-
-  .atto-weather-group {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .atto-cloud-svg {
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-  }
-</style>
-
-<script>
-(function upgradeCompassAndWeatherExact() {
-  const envBox = document.querySelector('.env-box');
-  if (!envBox) return;
-
-  const oldHeading = document.getElementById('headingVal')?.textContent || '--';
-  const oldDesc = document.getElementById('weatherDesc')?.textContent || 'เมฆมาก';
-  const oldTemp = document.getElementById('tempVal')?.textContent || '31°';
-  const oldPm = document.getElementById('pmVal')?.textContent || '22';
-
-  envBox.innerHTML = `
-    <!-- กล่องเข็มทิศ -->
-    <div class="atto-card-wrap atto-compass-wrap">
-      <div class="atto-red-bar"></div>
-      <div class="atto-card-inner atto-compass-inner">
-        <svg class="atto-compass-svg" viewBox="0 0 52 52">
-          <!-- วงแหวนหน้าปัดเข็มทิศ -->
-          <circle cx="26" cy="26" r="24" fill="#07090d" stroke="#262c3a" stroke-width="1.5" />
-          <!-- ตัวอักษรทิศ N E S W ล็อกตำแหน่งด้วย SVG -->
-          <text x="26" y="10.5" fill="#ff3b47" font-family="'Orbitron', sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">N</text>
-          <text x="26" y="46.5" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="7" font-weight="700" text-anchor="middle">S</text>
-          <text x="7.5" y="28.5" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="7" font-weight="700" text-anchor="middle">W</text>
-          <text x="44.5" y="28.5" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="7" font-weight="700" text-anchor="middle">E</text>
-          <!-- เข็มทิศสีขาวทรงแหลมเว้าท้ายตรงกลาง -->
-          <g id="compassNeedle" style="transform-origin: 26px 26px; transition: transform 0.2s ease-out;">
-            <polygon points="26,14 30.2,33.5 26,30.2 21.8,33.5" fill="#ffffff" />
-          </g>
-        </svg>
-        <div>
-          <div class="atto-meta-label">เข็มทิศ</div>
-          <div class="atto-heading-val" id="headingVal">${oldHeading}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- กล่องสภาพอากาศและ PM2.5 -->
-    <div class="atto-card-wrap atto-weather-wrap">
-      <div class="atto-red-bar"></div>
-      <div class="atto-card-inner atto-weather-inner">
-        <div class="atto-weather-group">
-          <svg class="atto-cloud-svg" viewBox="0 0 24 24" fill="#e5e7eb">
-            <path d="M17.5 19H7a5 5 0 0 1-.7-9.95A6.5 6.5 0 0 1 19 9.5a4.5 4.5 0 0 1-1.5 9.5z"/>
+ <div class="env-box" style="background:transparent;border:none;padding:0;display:flex;gap:10px;height:100%;">
+      <!-- กล่องเข็มทิศทรงปาดมุม -->
+      <div style="flex:0.95;position:relative;height:100%;background:#222834;padding:1px;clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));border-radius:10px 0 10px 0;">
+        <div style="position:absolute;top:0;left:0;width:48%;height:3.5px;background:#ff3b47;z-index:5;"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;gap:12px;padding:3px 12px 0 10px;">
+          <svg viewBox="0 0 52 52" style="width:40px;height:40px;flex-shrink:0;">
+            <circle cx="26" cy="26" r="24" fill="#07090d" stroke="#262c3a" stroke-width="1.5" />
+            <text x="26" y="10.5" fill="#ff3b47" font-family="'Orbitron',sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">N</text>
+            <text x="26" y="46.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">S</text>
+            <text x="7.5" y="28.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">W</text>
+            <text x="44.5" y="28.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">E</text>
+            <g id="compassNeedle" style="transform-origin:26px 26px;transition:transform 0.2s ease-out;">
+              <polygon points="26,14 30.2,33.5 26,30.2 21.8,33.5" fill="#ffffff" />
+            </g>
           </svg>
           <div>
-            <div class="atto-meta-label" id="weatherDesc">${oldDesc}</div>
-            <div class="atto-temp-val" id="tempVal">${oldTemp}</div>
+            <div style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">เข็มทิศ</div>
+            <div class="env-val" id="headingVal" style="font-size:16px;letter-spacing:1px;">--</div>
           </div>
         </div>
-        <div>
-          <div class="atto-meta-label">PM2.5</div>
-          <div class="atto-pm-val" id="pmVal">${oldPm}</div>
+      </div>
+
+      <!-- กล่องสภาพอากาศและ PM2.5 ทรงปาดมุม -->
+      <div style="flex:1.35;position:relative;height:100%;background:#222834;padding:1px;clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));border-radius:10px 0 10px 0;">
+        <div style="position:absolute;top:0;left:0;width:48%;height:3.5px;background:#ff3b47;z-index:5;"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;justify-content:space-between;padding:3px 14px 0 12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg viewBox="0 0 24 24" fill="#e5e7eb" style="width:24px;height:24px;flex-shrink:0;">
+              <path d="M17.5 19H7a5 5 0 0 1-.7-9.95A6.5 6.5 0 0 1 19 9.5a4.5 4.5 0 0 1-1.5 9.5z"/>
+            </svg>
+            <div>
+              <div id="weatherDesc" style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">เมฆมาก</div>
+              <div class="env-val" id="tempVal" style="font-size:18px;font-weight:800;">31°</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">PM2.5</div>
+            <div class="pm-val" id="pmVal" style="font-size:19px;font-weight:800;color:#22c55e;">22</div>
+          </div>
         </div>
       </div>
     </div>
-  `;
-
-  // ดึงค่าอุณหภูมิและ PM2.5 จริงตามพิกัด
-  async function fetchWeatherAndPM() {
-    const lat = typeof currentLat !== 'undefined' ? currentLat : 13.9892;
-    const lng = typeof currentLng !== 'undefined' ? currentLng : 100.6177;
-    try {
-      const [wRes, aRes] = await Promise.all([
-        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code`),
-        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=pm2_5`)
-      ]);
-      const wData = await wRes.json();
-      const aData = await aRes.json();
-
-      if (wData?.current) {
-        document.getElementById('tempVal').textContent = `${Math.round(wData.current.temperature_2m)}°`;
-        const code = wData.current.weather_code;
-        const descEl = document.getElementById('weatherDesc');
-        if (code === 0) descEl.textContent = 'ฟ้าโปร่ง';
-        else if (code <= 3) descEl.textContent = 'เมฆมาก';
-        else if (code >= 51 && code <= 99) descEl.textContent = 'มีฝน';
-      }
-
-      if (aData?.current?.pm2_5 != null) {
-        const pm = Math.round(aData.current.pm2_5);
-        const pmEl = document.getElementById('pmVal');
-        pmEl.textContent = pm;
-        pmEl.style.color = pm <= 25 ? '#22c55e' : (pm <= 50 ? '#facc15' : '#ef4444');
-      }
-    } catch (e) {}
-  }
-
-  fetchWeatherAndPM();
-  setInterval(fetchWeatherAndPM, 600000);
-})();
-</script>
 
 
   
