@@ -1261,7 +1261,7 @@
   defs.appendChild(grad);
 
   // 2. วาดรางวงแหวนรอบนอกสุด (r = 122) และแถบสีที่วิ่งตามความเร็ว
-  const rArc = 122;
+  const rArc = 124;
   const startRad = (-210 * Math.PI) / 180;
   const endRad = (30 * Math.PI) / 180;
   const xStart = (cx + rArc * Math.cos(startRad)).toFixed(2);
@@ -1275,7 +1275,7 @@
   bgTrack.setAttribute('d', arcPathData);
   bgTrack.setAttribute('fill', 'none');
   bgTrack.setAttribute('stroke', '#161b24');
-  bgTrack.setAttribute('stroke-width', '7');
+  bgTrack.setAttribute('stroke-width', '13');
   bgTrack.setAttribute('stroke-linecap', 'round');
   svg.appendChild(bgTrack);
 
@@ -1284,7 +1284,7 @@
   activeArc.setAttribute('d', arcPathData);
   activeArc.setAttribute('fill', 'none');
   activeArc.setAttribute('stroke', 'url(#attoOuterSpeedGrad)');
-  activeArc.setAttribute('stroke-width', '7');
+  activeArc.setAttribute('stroke-width', '13');
   activeArc.setAttribute('stroke-linecap', 'round');
   svg.appendChild(activeArc);
 
@@ -1292,7 +1292,7 @@
   const tipDot = document.createElementNS(SVG_NS, 'circle');
   tipDot.setAttribute('cx', xStart);
   tipDot.setAttribute('cy', yStart);
-  tipDot.setAttribute('r', '4.5');
+  tipDot.setAttribute('r', '7.5');
   tipDot.setAttribute('fill', '#10b981');
   svg.appendChild(tipDot);
 
