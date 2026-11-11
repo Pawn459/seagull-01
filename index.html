@@ -1307,4 +1307,92 @@
         tipDot.setAttribute('fill', color);
         tipDot.style.filter = `drop-shadow(0 0 6px ${color})`;
 
-        tickLines.
+        tickLines.forEach((line, idx) => {
+          const tickSpeed = idx * 10;
+          if (clamped >= tickSpeed && clamped > 0) {
+            line.setAttribute('stroke', getSpeedColor(tickSpeed));
+            line.setAttribute('stroke-width', idx % 2 === 0 ? '3' : '2');
+          } else {
+            line.setAttribute('stroke', tickSpeed >= 140 ? '#ef4444' : '#4b5563');
+            line.setAttribute('stroke-width', idx % 2 === 0 ? '2.5' : '1.5');
+          }
+        });
+
+        tickTexts.forEach((txt, idx) => {
+          const textSpeed = idx * 20;
+          if (clamped >= textSpeed && clamped > 0) {
+            txt.setAttribute('fill', '#ffffff');
+          } else {
+            txt.setAttribute('fill', '#6b7280');
+          }
+        });
+
+        requestAnimationFrame(renderGaugeFrame);
+      }
+      requestAnimationFrame(renderGaugeFrame);
+
+      let lastGpsLat = null, lastGpsLng = null, lastGpsTime = null;
+      let isDemoSweeping = false;
+
+      const origUpdateTelemetry = window.updateTelemetry;
+      if (typeof origUpdateTelemetry === 'function') {
+        window.updateTelemetry = function(speedKmh, accelMps2, heading) {
+          if (!isDemoSweeping) {
+            targetSpeed = Math.max(0, speedKmh || 0);
+          }
+          return origUpdateTelemetry.apply(this, arguments);
+        };
+      }
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.watchPosition((pos) => {
+          if (isDemoSweeping) return;
+          const { latitude, longitude, speed } = pos.coords;
+          const now = Date.now();
+          let calcKmh = (speed !== null && !isNaN(speed)) ? speed * 3.6 : 0;
+
+          if (calcKmh === 0 && lastGpsLat !== null && lastGpsTime !== null) {
+            const dt = (now - lastGpsTime) / 1000;
+            if (dt >= 0.5 && dt < 10) {
+              const distKm = getDistanceKm(lastGpsLat, lastGpsLng, latitude, longitude);
+              const fallbackKmh = (distKm / dt) * 3600;
+              if (fallbackKmh >= 2 && fallbackKmh <= 200) {
+                calcKmh = fallbackKmh;
+              }
+            }
+          }
+          lastGpsLat = latitude;
+          lastGpsLng = longitude;
+          lastGpsTime = now;
+          targetSpeed = calcKmh;
+        }, () => {}, { enableHighAccuracy: true, maximumAge: 500 });
+      }
+
+      const wrapper = document.querySelector('.gauge-wrapper');
+      if (wrapper) {
+        wrapper.style.cursor = 'pointer';
+        wrapper.title = 'คลิกเพื่อทดสอบกวาดเรือนไมล์ 0-160 km/h';
+        wrapper.addEventListener('click', () => {
+          if (isDemoSweeping) return;
+          isDemoSweeping = true;
+          let demoSpd = 0;
+          let dir = 1;
+          const timer = setInterval(() => {
+            demoSpd += dir * 4;
+            if (demoSpd >= 160) { demoSpd = 160; dir = -1; }
+            if (demoSpd <= 0 && dir === -1) {
+              demoSpd = 0;
+              clearInterval(timer);
+              isDemoSweeping = false;
+            }
+            targetSpeed = demoSpd;
+            if (typeof origUpdateTelemetry === 'function') {
+              origUpdateTelemetry(demoSpd, dir * 1.5, null);
+            }
+          }, 30);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
