@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ATTO1 SPORT - Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Rajdhani for sporty/tech look -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0b0c10;
+            color: #ffffff;
+            user-select: none;
+        }
+
+        /* Neon Glow Utility Classes */
+        .glow-text-green { text-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
+        .glow-text-red { text-shadow: 0 0 15px rgba(255, 50, 50, 0.8); }
+        .glow-border-green { box-shadow: 0 0 15px rgba(0, 255, 0, 0.3); border-color: #00ff00; }
+        
+        /* Custom Scrollbar for hidden overflows */
+        ::-webkit-scrollbar { display: none; }
+        
+        /* Speedometer Clip Path */
+        .speed-arc {
+            border: 4px solid #333;
+            border-top-color: #ff3333;
+            border-radius: 50%;
+            border-bottom: transparent;
+        }
+
+        /* Leaflet Dark Theme Adjustments */
+        .leaflet-layer,
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out,
+        .leaflet-control-attribution {
+            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+        }
+        
+        /* Layout Fixes */
+        .panel {
+            background: linear-gradient(145deg, #16181f, #0f1015);
+            border: 1px solid #2a2d3a;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col p-4 gap-4">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center h-10 shrink-0 px-2">
+        <div class="flex items-center gap-4">
+            <h1 class="text-2xl font-bold italic tracking-widest text-white">
+                ATTO1 <span class="text-red-500">· SPORT</span>
+            </h1>
+            <div class="h-1 w-32 bg-gradient-to-r from-red-500 to-transparent skew-x-12"></div>
+        </div>
+        <div class="flex items-center gap-4 text-sm text-gray-400">
+            <span id="gps-status" class="flex items-center gap-1 text-green-400">
+                <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                GPS Active
+            </span>
+            <div id="clock" class="text-2xl font-bold text-white tracking-widest">00:00</div>
+        </div>
+    </header>
+
+    <!-- Main Content (3 Columns) -->
+    <main class="flex-1 flex gap-4 min-h-0">
+        
+        <!-- Left Column: Speedometer -->
+        <div class="panel w-1/3 rounded-2xl p-6 flex flex-col relative">
+            <h2 class="text-gray-400 font-semibold tracking-wider text-sm">SPEED</h2>
+            
+            <div class="flex-1 flex flex-col items-center justify-center relative">
+                <!-- Decorative Arc -->
+                <div class="absolute w-64 h-64 speed-arc opacity-50"></div>
+                
+                <div class="text-center z-10">
+                    <div id="speed-value" class="text-8xl font-bold italic leading-none glow-text-white">0</div>
+                    <div class="text-xl text-gray-400 tracking-[0.2em] mt-2">KM/H</div>
+                </div>
+                
+                <div id="accel-value" class="mt-8 text-red-500 font-bold tracking-widest glow-text-red">
+                    +0.00 m/s²
+                </div>
+            </div>
+
+            <!-- Bottom Stats -->
+            <div class="flex gap-2 w-full mt-auto">
+                <div class="bg-black/50 p-2 rounded-lg flex-1 border border-gray-800">
+                    <div class="text-xs text-gray-500">MAX</div>
+                    <div class="text-lg font-bold">120</div>
+                </div>
+                <div class="bg-black/50 p-2 rounded-lg flex-1 border border-gray-800">
+                    <div class="text-xs text-gray-500">0-100</div>
+                    <div class="text-lg font-bold">--</div>
+                </div>
+                <div class="bg-black/50 p-2 rounded-lg flex-1 border border-gray-800">
+                    <div class="text-xs text-gray-500">BEST</div>
+                    <div class="text-lg font-bold">--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Column: Live Map -->
+        <div class="panel w-1/3 rounded-2xl overflow-hidden relative border border-gray-700">
+            <div class="absolute top-4 left-4 z-[400] text-gray-200 font-semibold tracking-wider text-sm bg-black/60 px-3 py-1 rounded-md backdrop-blur-sm">
+                LIVE MAP
+            </div>
+            <!-- Leaflet Map Container -->
+            <div id="map" class="w-full h-full bg-gray-900"></div>
+            
+            <button id="center-map-btn" class="absolute bottom-4 right-4 z-[400] bg-gray-800/80 hover:bg-gray-700 border border-gray-600 text-white px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-sm transition">
+                ◎ ศูนย์กลาง
+            </button>
+        </div>
+
+        <!-- Right Column: Info & Score -->
+        <div class="panel w-1/3 rounded-2xl p-6 flex flex-col gap-6">
+            
+            <!-- Drive Score -->
+            <div>
+                <h2 class="text-gray-400 font-semibold tracking-wider text-sm mb-2">DRIVE SCORE</h2>
+                <div class="flex items-end gap-2">
+                    <div class="text-7xl font-bold text-[#00ff00] glow-text-green leading-none">100</div>
+                    <div class="text-[#00ff00] font-bold text-xl mb-1">นุ่มนวล</div>
+                </div>
+                <div class="w-full h-2 bg-gray-800 rounded-full mt-4 overflow-hidden">
+                    <div class="h-full bg-[#00ff00] glow-border-green w-full"></div>
+                </div>
+            </div>
+
+            <!-- G-Force Indicators -->
+            <div class="flex gap-2">
+                <div class="bg-black/40 flex-1 p-3 rounded-xl border border-gray-800 text-center">
+                    <div class="text-xs text-gray-500">เร่งแรง</div>
+                    <div class="text-lg font-bold text-white">0</div>
+                </div>
+                <div class="bg-black/40 flex-1 p-3 rounded-xl border border-gray-800 text-center">
+                    <div class="text-xs text-gray-500">เบรกแรง</div>
+                    <div class="text-lg font-bold text-white">0</div>
+                </div>
+                <div class="bg-black/40 flex-1 p-3 rounded-xl border border-gray-800 text-center">
+                    <div class="text-xs text-gray-500">เลี้ยวแรง</div>
+                    <div class="text-lg font-bold text-white">0</div>
+                </div>
+            </div>
+
+            <!-- Nearby Stations -->
+            <div class="flex-1 bg-black/40 rounded-xl border border-gray-800 p-4 flex flex-col">
+                <h2 class="text-gray-400 font-semibold tracking-wider text-sm mb-4">สถานีชาร์จใกล้เคียง</h2>
+                <div class="flex flex-col gap-3 overflow-y-auto">
+                    <!-- Dummy Data -->
+                    <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
+                        <div class="flex items-center gap-2">
+                            <span class="text-orange-400">⚡</span>
+                            <span class="font-semibold text-gray-200">PEA VOLTA - ปตท.</span>
+                        </div>
+                        <span class="text-cyan-400 font-bold">2.4 km</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
+                        <div class="flex items-center gap-2">
+                            <span class="text-orange-400">⚡</span>
+                            <span class="font-semibold text-gray-200">EA Anywhere - ห้างสรรพสินค้า</span>
+                        </div>
+                        <span class="text-cyan-400 font-bold">5.1 km</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-gray-800/50 p-3 rounded-lg border border-gray-700/50">
+                        <div class="flex items-center gap-2">
+                            <span class="text-orange-400">⚡</span>
+                            <span class="font-semibold text-gray-200">Tesla Supercharger</span>
+                        </div>
+                        <span class="text-cyan-400 font-bold">8.0 km</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Bottom Bar (Controls) -->
+    <footer class="h-16 shrink-0 flex gap-4">
+        <!-- Weather / Nav -->
+        <div class="panel rounded-xl px-6 flex items-center gap-6 border border-gray-700 w-1/3">
+            <div class="text-center">
+                <div class="text-xs text-gray-500">ทิศทาง</div>
+                <div class="text-xl font-bold text-white">N <span class="text-sm text-gray-400">0°</span></div>
+            </div>
+            <div class="w-px h-8 bg-gray-700"></div>
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">☁️</span>
+                <div>
+                    <div class="text-xs text-gray-500">PM 2.5</div>
+                    <div class="text-lg font-bold text-yellow-400">30</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sound Simulator Control -->
+        <div class="flex-1 flex gap-2">
+            <button class="flex-1 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 rounded-xl border-2 border-red-400/50 text-white font-bold text-xl flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(255,0,0,0.3)] transition">
+                🔊 เสียงเครื่องยนต์ (จำลอง)
+            </button>
+            <div class="panel rounded-xl flex items-center px-4 border border-gray-700">
+                <select class="bg-transparent text-white font-bold outline-none text-lg cursor-pointer">
+                    <option class="bg-gray-900">Lamborghini V12</option>
+                    <option class="bg-gray-900">Porsche Flat-6</option>
+                    <option class="bg-gray-900">V8 Muscle</option>
+                    <option class="bg-gray-900">Spaceship (EV)</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="panel w-32 rounded-xl border border-gray-700 font-bold hover:bg-gray-800 transition">
+            รีเซ็ต
+        </button>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // --- 1. Clock System ---
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('clock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- 2. Map System (Leaflet) ---
+        // Default coordinates (Bangkok/Rangsit area fallback)
+        let currentLat = 13.9892;
+        let currentLng = 100.6169;
+        
+        const map = L.map('map', {
+            zoomControl: false, // Hide default zoom controls for cleaner UI
+            attributionControl: false
+        }).setView([currentLat, currentLng], 15);
+
+        // Load OpenStreetMap tiles (Inverted in CSS for Dark Mode)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Custom Marker for Car
+        const carIcon = L.divIcon({
+            className: 'car-marker',
+            html: `<div style="width: 20px; height: 20px; background-color: #00ff00; border-radius: 50%; box-shadow: 0 0 15px #00ff00; border: 3px solid #000;"></div>`,
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+        });
+        
+        let marker = L.marker([currentLat, currentLng], {icon: carIcon}).addTo(map);
+
+        document.getElementById('center-map-btn').addEventListener('click', () => {
+            map.setView([currentLat, currentLng], 16);
+        });
+
+        // --- 3. Speed & GPS Tracking System ---
+        const speedElement = document.getElementById('speed-value');
+        const gpsStatus = document.getElementById('gps-status');
+        
+        let lastSpeed = 0;
+        
+        if ("geolocation" in navigator) {
+            navigator.geolocation.watchPosition(
+                (position) => {
+                    // Update Map Position
+                    currentLat = position.coords.latitude;
+                    currentLng = position.coords.longitude;
+                    marker.setLatLng([currentLat, currentLng]);
+                    
+                    // Option to auto-pan map (disabled to allow user drag, user clicks 'center' to snap back)
+                    // map.panTo([currentLat, currentLng]);
+
+                    // Calculate Speed
+                    // position.coords.speed is in meters/second. Multiply by 3.6 for km/h
+                    let speedMps = position.coords.speed;
+                    
+                    if (speedMps === null || speedMps < 0.5) {
+                        speedMps = 0; // Filter out GPS noise when stationary
+                    }
+                    
+                    let speedKmh = Math.round(speedMps * 3.6);
+                    
+                    // Update UI
+                    speedElement.textContent = speedKmh;
+                    
+                    // Add glow effect if driving fast
+                    if(speedKmh > 80) {
+                        speedElement.classList.replace('glow-text-white', 'glow-text-red');
+                        speedElement.classList.add('text-red-500');
+                    } else {
+                        speedElement.classList.replace('glow-text-red', 'glow-text-white');
+                        speedElement.classList.remove('text-red-500');
+                    }
+                    
+                    gpsStatus.innerHTML = `<div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div> GPS Active`;
+                    gpsStatus.className = "flex items-center gap-1 text-green-400";
+                },
+                (error) => {
+                    console.warn("GPS Error:", error.message);
+                    gpsStatus.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500"></div> No GPS Signal`;
+                    gpsStatus.className = "flex items-center gap-1 text-red-500";
+                    // Custom message handling instead of alert()
+                    const container = document.getElementById('gps-status');
+                    container.title = error.message; 
+                },
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 1000,
+                    timeout: 5000
+                }
+            );
+        } else {
+            gpsStatus.innerHTML = `<div class="w-2 h-2 rounded-full bg-red-500"></div> Not Supported`;
+            gpsStatus.className = "flex items-center gap-1 text-red-500";
+        }
+
+        // Handle Map resizing issues inside flex containers
+        window.addEventListener('resize', () => {
+            map.invalidateSize();
+        });
+        
+        // Initial setup for flex layout map calculation
+        setTimeout(() => {
+            map.invalidateSize();
+        }, 100);
+
+    </script>
+</body>
+</html>
