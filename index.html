@@ -1227,5 +1227,214 @@
     new MutationObserver(clean).observe(document.body, { childList: true });
   })();
 </script>
+  <script>
+(function upgradeAtto1Speedometer() {
+  const svg = document.getElementById('gaugeSvg');
+  const ticksGroup = document.getElementById('gaugeTicks');
+  const speedEl = document.getElementById('speedVal');
+  if (!svg || !ticksGroup || !speedEl) return;
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const cx = 130, cy = 130, maxSpeedGauge = 160;
+
+  // 1. สร้างสีไล่ระดับ เขียว -> เหลือง -> ส้ม -> แดง สำหรับวงนอกสุด
+  let defs = svg.querySelector('defs');
+  if (!defs) {
+    defs = document.createElementNS(SVG_NS, 'defs');
+    svg.prepend(defs);
+  }
+
+  const grad = document.createElementNS(SVG_NS, 'linearGradient');
+  grad.setAttribute('id', 'attoOuterSpeedGrad');
+  grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+  grad.setAttribute('x1', '20');
+  grad.setAttribute('y1', '190');
+  grad.setAttribute('x2', '240');
+  grad.setAttribute('y2', '190');
+  grad.innerHTML = `
+    <stop offset="0%" stop-color="#10b981" />
+    <stop offset="35%" stop-color="#22c55e" />
+    <stop offset="60%" stop-color="#facc15" />
+    <stop offset="82%" stop-color="#f97316" />
+    <stop offset="100%" stop-color="#ef4444" />
+  `;
+  defs.appendChild(grad);
+
+  // 2. วาดรางวงแหวนรอบนอกสุด (r = 122) และแถบสีที่วิ่งตามความเร็ว
+  const rArc = 122;
+  const startRad = (-210 * Math.PI) / 180;
+  const endRad = (30 * Math.PI) / 180;
+  const xStart = (cx + rArc * Math.cos(startRad)).toFixed(2);
+  const yStart = (cy + rArc * Math.sin(startRad)).toFixed(2);
+  const xEnd = (cx + rArc * Math.cos(endRad)).toFixed(2);
+  const yEnd = (cy + rArc * Math.sin(endRad)).toFixed(2);
+  const arcPathData = `M ${xStart} ${yStart} A ${rArc} ${rArc} 0 1 1 ${xEnd} ${yEnd}`;
+
+  // รางพื้นหลังวงนอกสุด
+  const bgTrack = document.createElementNS(SVG_NS, 'path');
+  bgTrack.setAttribute('d', arcPathData);
+  bgTrack.setAttribute('fill', 'none');
+  bgTrack.setAttribute('stroke', '#161b24');
+  bgTrack.setAttribute('stroke-width', '7');
+  bgTrack.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(bgTrack);
+
+  // แถบสีวิ่งตามความเร็ววงนอกสุด
+  const activeArc = document.createElementNS(SVG_NS, 'path');
+  activeArc.setAttribute('d', arcPathData);
+  activeArc.setAttribute('fill', 'none');
+  activeArc.setAttribute('stroke', 'url(#attoOuterSpeedGrad)');
+  activeArc.setAttribute('stroke-width', '7');
+  activeArc.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(activeArc);
+
+  // จุดไฟนำทางที่ปลายแถบความเร็ว
+  const tipDot = document.createElementNS(SVG_NS, 'circle');
+  tipDot.setAttribute('cx', xStart);
+  tipDot.setAttribute('cy', yStart);
+  tipDot.setAttribute('r', '4.5');
+  tipDot.setAttribute('fill', '#10b981');
+  svg.appendChild(tipDot);
+
+  const arcLength = activeArc.getTotalLength();
+  activeArc.style.strokeDasharray = `${arcLength}`;
+  activeArc.style.strokeDashoffset = `${arcLength}`;
+
+  // ฟังก์ชันคำนวณสีตามความเร็ว (เขียว -> เหลือง -> ส้ม -> แดง)
+  function getSpeedColor(spd) {
+    if (spd < 45) return '#10b981'; // เขียว (ช้า)
+    if (spd < 80) return '#84cc16'; // เขียวอมเหลือง
+    if (spd < 105) return '#facc15'; // เหลือง (ปานกลาง)
+    if (spd < 130) return '#f97316'; // ส้ม (เร็ว)
+    return '#ef4444';                // แดง (ความเร็วสูง)
+  }
+
+  // เก็บรายการขีดและตัวเลขรอบหน้าปัดเพื่อเปลี่ยนสีตามความเร็ว
+  const tickLines = Array.from(ticksGroup.querySelectorAll('line'));
+  const tickTexts = Array.from(ticksGroup.querySelectorAll('text'));
+
+  // 3. ระบบขยับตัวเลขและแถบสีแบบสมูท (60 เฟรมต่อวินาที)
+  let targetSpeed = 0;
+  let currentSpeed = 0;
+
+  function renderGaugeFrame() {
+    const diff = targetSpeed - currentSpeed;
+    if (Math.abs(diff) > 0.08) {
+      currentSpeed += diff * 0.18;
+    } else {
+      currentSpeed = targetSpeed;
+    }
+
+    const clamped = Math.max(0, Math.min(maxSpeedGauge, currentSpeed));
+    const ratio = clamped / maxSpeedGauge;
+    const color = getSpeedColor(clamped);
+
+    // อัปเดตตัวเลขความเร็วตรงกลาง
+    speedEl.textContent = Math.round(currentSpeed);
+    speedEl.style.textShadow = clamped > 2 ? `0 0 18px ${color}55` : 'none';
+
+    // อัปเดตแถบสีวงนอกสุด
+    activeArc.style.strokeDashoffset = `${arcLength * (1 - ratio)}`;
+    activeArc.style.filter = `drop-shadow(0 0 6px ${color}88)`;
+
+    // อัปเดตจุดไฟที่ปลายแถบสี
+    const deg = -210 + ratio * 240;
+    const rad = (deg * Math.PI) / 180;
+    tipDot.setAttribute('cx', (cx + rArc * Math.cos(rad)).toFixed(2));
+    tipDot.setAttribute('cy', (cy + rArc * Math.sin(rad)).toFixed(2));
+    tipDot.setAttribute('fill', color);
+    tipDot.style.filter = `drop-shadow(0 0 6px ${color})`;
+
+    // ให้ขีดไมล์และตัวเลขรอบวงสว่างขึ้นตามความเร็วที่วิ่งผ่าน
+    tickLines.forEach((line, idx) => {
+      const tickSpeed = idx * 10;
+      if (clamped >= tickSpeed && clamped > 0) {
+        line.setAttribute('stroke', getSpeedColor(tickSpeed));
+        line.setAttribute('stroke-width', idx % 2 === 0 ? '3' : '2');
+      } else {
+        line.setAttribute('stroke', tickSpeed >= 140 ? '#ef4444' : '#4b5563');
+        line.setAttribute('stroke-width', idx % 2 === 0 ? '2.5' : '1.5');
+      }
+    });
+
+    tickTexts.forEach((txt, idx) => {
+      const textSpeed = idx * 20;
+      if (clamped >= textSpeed && clamped > 0) {
+        txt.setAttribute('fill', '#ffffff');
+      } else {
+        txt.setAttribute('fill', '#6b7280');
+      }
+    });
+
+    requestAnimationFrame(renderGaugeFrame);
+  }
+  requestAnimationFrame(renderGaugeFrame);
+
+  // 4. เชื่อมกับความเร็ว GPS รถยนต์ ATTO 1 (พร้อมระบบคำนวณระยะทางสำรองหากเบราว์เซอร์ไม่ส่งค่า speed)
+  let lastGpsLat = null, lastGpsLng = null, lastGpsTime = null;
+  let isDemoSweeping = false;
+
+  const origUpdateTelemetry = window.updateTelemetry;
+  if (typeof origUpdateTelemetry === 'function') {
+    window.updateTelemetry = function(speedKmh, accelMps2, heading) {
+      if (!isDemoSweeping) {
+        targetSpeed = Math.max(0, speedKmh || 0);
+      }
+      return origUpdateTelemetry.apply(this, arguments);
+    };
+  }
+
+  if ('geolocation' in navigator) {
+    navigator.geolocation.watchPosition((pos) => {
+      if (isDemoSweeping) return;
+      const { latitude, longitude, speed } = pos.coords;
+      const now = Date.now();
+      let calcKmh = (speed !== null && !isNaN(speed)) ? speed * 3.6 : 0;
+
+      // หากอุปกรณ์ส่งค่า speed เป็น 0 หรือ null ให้คำนวณความเร็วจากระยะพิกัด GPS ที่ขยับจริง
+      if (calcKmh === 0 && lastGpsLat !== null && lastGpsTime !== null) {
+        const dt = (now - lastGpsTime) / 1000;
+        if (dt >= 0.5 && dt < 10) {
+          const distKm = getDistanceKm(lastGpsLat, lastGpsLng, latitude, longitude);
+          const fallbackKmh = (distKm / dt) * 3600;
+          if (fallbackKmh >= 2 && fallbackKmh <= 200) {
+            calcKmh = fallbackKmh;
+          }
+        }
+      }
+      lastGpsLat = latitude;
+      lastGpsLng = longitude;
+      lastGpsTime = now;
+      targetSpeed = calcKmh;
+    }, () => {}, { enableHighAccuracy: true, maximumAge: 500 });
+  }
+
+  // 5. คลิกที่เรือนไมล์เพื่อทดสอบกวาดเข็ม 0 -> 160 -> 0 ตอนรถจอด
+  const wrapper = document.querySelector('.gauge-wrapper');
+  if (wrapper) {
+    wrapper.style.cursor = 'pointer';
+    wrapper.title = 'คลิกเพื่อทดสอบกวาดเรือนไมล์ 0-160 km/h';
+    wrapper.addEventListener('click', () => {
+      if (isDemoSweeping) return;
+      isDemoSweeping = true;
+      let demoSpd = 0;
+      let dir = 1;
+      const timer = setInterval(() => {
+        demoSpd += dir * 4;
+        if (demoSpd >= 160) { demoSpd = 160; dir = -1; }
+        if (demoSpd <= 0 && dir === -1) {
+          demoSpd = 0;
+          clearInterval(timer);
+          isDemoSweeping = false;
+        }
+        targetSpeed = demoSpd;
+        if (typeof origUpdateTelemetry === 'function') {
+          origUpdateTelemetry(demoSpd, dir * 1.5, null);
+        }
+      }, 30);
+    });
+  }
+})();
+</script>
 </body>
 </html>
