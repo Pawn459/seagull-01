@@ -110,7 +110,7 @@
 
     .clock-time {
       font-family: 'Orbitron', sans-serif;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: 800;
       color: #ffffff;
     }
@@ -129,7 +129,7 @@
       min-height: 0;
     }
 
-    .panel {
+   .panel {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
@@ -177,8 +177,8 @@
     }
 
     .gauge-wrapper {
-      width: min(220px, 38vh);
-      height: min(220px, 38vh);
+      width: min(210px, 34vh);
+      height: min(210px, 34vh);
       position: relative;
       display: flex;
       align-items: center;
@@ -204,7 +204,7 @@
     .speed-value {
       font-family: 'Orbitron', sans-serif;
       font-style: italic;
-      font-size: clamp(44px, 8vh, 64px);
+      font-size: clamp(44px, 8vh, 64px); /* ปรับขนาดตัวเลขความเร็วตามสัดส่วน */
       font-weight: 800;
       line-height: 0.95;
       color: #ffffff;
@@ -236,7 +236,7 @@
       background-color: var(--bg-subcard);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 6px 10px;
+      padding: 8px 10px;
     }
 
     .sub-card-label {
@@ -247,7 +247,7 @@
 
     .sub-card-val {
       font-family: 'Orbitron', sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       color: #ffffff;
       margin-top: 2px;
@@ -337,7 +337,7 @@
     .right-col {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
       min-height: 0;
     }
 
@@ -350,12 +350,12 @@
       display: flex;
       align-items: baseline;
       gap: 10px;
-      margin: 4px 0;
+      margin: 6px 0;
     }
 
     .score-number {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(38px, 7vh, 52px);
+      font-size: 54px;
       font-weight: 800;
       color: var(--accent-green);
       line-height: 1;
@@ -369,11 +369,11 @@
 
     .score-bar-bg {
       width: 100%;
-      height: 7px;
+      height: 8px;
       background: #181c24;
       border-radius: 99px;
       overflow: hidden;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .score-bar-fill {
@@ -392,7 +392,7 @@
     }
 
     .stations-list {
-      margin-top: 6px;
+      margin-top: 8px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -414,7 +414,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 6px 8px;
+      padding: 8px 8px;
       border-bottom: 1px solid #161a22;
       cursor: pointer;
       border-radius: 6px;
@@ -478,3 +478,924 @@
     }
 
     .env-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .pm-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent-yellow);
+    }
+
+    .audio-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-dark {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: #ffffff;
+      border-radius: 10px;
+      height: 100%;
+      font-family: 'Kanit', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+
+    .btn-dark:hover {
+      border-color: #374151;
+    }
+
+    .btn-sound {
+      flex: 1;
+    }
+
+    .btn-sound.active {
+      border-color: var(--accent-red);
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+    }
+
+    .sound-select {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: #ffffff;
+      border-radius: 10px;
+      height: 100%;
+      padding: 0 12px;
+      font-family: 'Kanit', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .speed-limiter {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      height: 100%;
+      padding: 0 6px;
+      gap: 6px;
+    }
+
+    .limit-btn {
+      background: #161a22;
+      border: none;
+      color: #9ca3af;
+      width: 26px;
+      height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .limit-val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 34px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      body { overflow-y: auto; height: auto; }
+      .main-grid { grid-template-columns: 1fr; }
+      .map-panel { height: 340px; }
+      .bottom-bar { grid-template-columns: 1fr; height: auto; }
+      .env-box, .btn-dark, .sound-select, .speed-limiter { height: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="brand-title">
+      SEAGULL<span class="red">1</span> · PREMIUM
+    </div>
+    <div class="header-line"></div>
+    <div class="header-right">
+      <div class="gps-badge">
+        <span class="gps-dot" id="gpsDot"></span>
+        <span id="gpsText">GPS พร้อมใช้</span>
+      </div>
+      <div class="clock-box">
+        <div class="clock-time" id="clockTime">08:27</div>
+        <div class="clock-date" id="clockDate">พุธ 11 พ.ย.</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN 3 COLUMNS -->
+  <main class="main-grid">
+
+    <!-- LEFT: SPEEDOMETER -->
+    <section class="panel speed-panel">
+      <div class="panel-title">SPEED</div>
+
+      <div class="gauge-container">
+        <div class="gauge-wrapper">
+          <svg class="gauge-svg" viewBox="0 0 260 260" id="gaugeSvg">
+            <defs>
+              <radialGradient id="dialGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#151922" stop-opacity="0.9" />
+                <stop offset="75%" stop-color="#0d1017" stop-opacity="0.95" />
+                <stop offset="100%" stop-color="#0c0e12" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="130" cy="130" r="115" fill="url(#dialGrad)" />
+            <g id="gaugeTicks"></g>
+          </svg>
+          <div class="gauge-center-text">
+            <div class="speed-value" id="speedVal">0</div>
+            <div class="speed-unit">KM/H</div>
+            <div class="accel-value" id="accelVal">+0.00 m/s²</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-cards-3">
+        <div class="sub-card">
+          <div class="sub-card-label">MAX</div>
+          <div class="sub-card-val" id="maxSpeedVal">0</div>
+        </div>
+        <div class="sub-card">
+          <div class="sub-card-label">0-100</div>
+          <div class="sub-card-val" id="zeroToHundredVal">--</div>
+        </div>
+        <div class="sub-card">
+          <div class="sub-card-label">BEST</div>
+          <div class="sub-card-val" id="bestTimeVal">--</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENTER: LIVE MAP -->
+    <section class="panel map-panel">
+      <div class="map-overlay-title">LIVE MAP</div>
+      <div id="map"></div>
+      <button class="follow-btn" id="followBtn">◎ ตามรถ</button>
+    </section>
+
+    <!-- RIGHT: DRIVE SCORE & CHARGING STATIONS -->
+    <div class="right-col">
+      <section class="panel score-panel">
+        <div class="panel-title">DRIVE SCORE</div>
+        <div class="score-display">
+          <span class="score-number" id="scoreVal">100</span>
+          <span class="score-label" id="scoreText">นุ่มมาก</span>
+        </div>
+        <div class="score-bar-bg">
+          <div class="score-bar-fill" id="scoreBar"></div>
+        </div>
+        <div class="sub-cards-3">
+          <div class="sub-card">
+            <div class="sub-card-label">เร่งแรง</div>
+            <div class="sub-card-val" id="hardAccelVal">0</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-label">เบรกแรง</div>
+            <div class="sub-card-val" id="hardBrakeVal">0</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-label">เลี้ยวแรง</div>
+            <div class="sub-card-val" id="hardTurnVal">0</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel stations-panel">
+        <div class="panel-header-row">
+          <div class="panel-title">สถานีชาร์จใกล้</div>
+          <div class="station-status" id="stationStatus">กำลังโหลด...</div>
+        </div>
+        <div class="stations-list" id="stationsList"></div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM BAR -->
+  <footer class="bottom-bar">
+    <div class="env-box" style="background:transparent;border:none;padding:0;display:flex;gap:10px;height:100%;">
+      <!-- กล่องเข็มทิศทรงปาดมุม -->
+      <div style="flex:0.95;position:relative;height:100%;background:#222834;padding:1px;clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));border-radius:10px 0 10px 0;">
+        <div style="position:absolute;top:0;left:0;width:48%;height:3.5px;background:#ff3b47;z-index:5;"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;gap:12px;padding:3px 12px 0 10px;">
+          <svg viewBox="0 0 52 52" style="width:40px;height:40px;flex-shrink:0;">
+            <circle cx="26" cy="26" r="24" fill="#07090d" stroke="#262c3a" stroke-width="1.5" />
+            <text x="26" y="10.5" fill="#ff3b47" font-family="'Orbitron',sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">N</text>
+            <text x="26" y="46.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">S</text>
+            <text x="7.5" y="28.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">W</text>
+            <text x="44.5" y="28.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">E</text>
+            <g id="compassNeedle" style="transform-origin:26px 26px;transition:transform 0.2s ease-out;">
+              <polygon points="26,14 30.2,33.5 26,30.2 21.8,33.5" fill="#ffffff" />
+            </g>
+          </svg>
+          <div>
+            <div style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">เข็มทิศ</div>
+            <div class="env-val" id="headingVal" style="font-size:16px;letter-spacing:1px;">--</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- กล่องสภาพอากาศและ PM2.5 ทรงปาดมุม -->
+      <div style="flex:1.35;position:relative;height:100%;background:#222834;padding:1px;clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));border-radius:10px 0 10px 0;">
+        <div style="position:absolute;top:0;left:0;width:48%;height:3.5px;background:#ff3b47;z-index:5;"></div>
+        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;justify-content:space-between;padding:3px 14px 0 12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <svg viewBox="0 0 24 24" fill="#e5e7eb" style="width:24px;height:24px;flex-shrink:0;">
+              <path d="M17.5 19H7a5 5 0 0 1-.7-9.95A6.5 6.5 0 0 1 19 9.5a4.5 4.5 0 0 1-1.5 9.5z"/>
+            </svg>
+            <div>
+              <div id="weatherDesc" style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">เมฆมาก</div>
+              <div class="env-val" id="tempVal" style="font-size:18px;font-weight:800;">31°</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">PM2.5</div>
+            <div class="pm-val" id="pmVal" style="font-size:19px;font-weight:800;color:#22c55e;">22</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="audio-controls">
+      <button class="btn-dark btn-sound" id="soundBtn">
+        <span>🔊</span> <span id="soundBtnText">เสียง</span>
+      </button>
+      <select class="sound-select" id="engineSelect">
+        <option value="v12">Lamborghini V12</option>
+        <option value="v8">Ferrari V8</option>
+        <option value="gt3">Porsche Flat-6</option>
+        <option value="ev">Sport EV Boost</option>
+      </select>
+      <div class="speed-limiter">
+        <button class="limit-btn" id="limitMinus">-</button>
+        <span class="limit-val" id="limitVal">120</span>
+        <button class="limit-btn" id="limitPlus">+</button>
+      </div>
+    </div>
+
+    <button class="btn-dark" id="resetBtn">↺ รีเซ็ต</button>
+  </footer>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // ===== 1. สร้างขีดมาตรวัด 0 - 160 KM/H =====
+    (function drawGaugeTicks() {
+      const group = document.getElementById('gaugeTicks');
+      const cx = 130, cy = 130, rOuter = 112, rMaj = 100, rMin = 106, rText = 84;
+      let html = '';
+      for (let s = 0; s <= 160; s += 10) {
+        const deg = -210 + (s / 160) * 240;
+        const rad = (deg * Math.PI) / 180;
+        const isMaj = s % 20 === 0;
+        const rIn = isMaj ? rMaj : rMin;
+        const x1 = cx + rOuter * Math.cos(rad);
+        const y1 = cy + rOuter * Math.sin(rad);
+        const x2 = cx + rIn * Math.cos(rad);
+        const y2 = cy + rIn * Math.sin(rad);
+        const color = s >= 140 ? '#ef4444' : '#4b5563';
+        const width = isMaj ? 2.5 : 1.5;
+
+        html += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" />`;
+
+        if (isMaj) {
+          const tx = cx + rText * Math.cos(rad);
+          const ty = cy + rText * Math.sin(rad) + 4;
+          html += `<text x="${tx}" y="${ty}" fill="#6b7280" font-family="'Orbitron', sans-serif" font-size="10" font-weight="700" text-anchor="middle">${s}</text>`;
+        }
+      }
+      group.innerHTML = html;
+    })();
+
+    // ===== 2. นาฬิกาและวันที่ภาษาไทย =====
+    function updateClock() {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const mm = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('clockTime').textContent = `${hh}:${mm}`;
+
+      const days = ['อา.', 'จ.', 'อ.', 'พุธ', 'พฤ.', 'ศ.', 'ส.'];
+      const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      document.getElementById('clockDate').textContent = `${days[now.getDay()]} ${now.getDate()} ${months[now.getMonth()]}`;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // ===== 3. แผนที่เริ่มต้นที่ประเทศไทย =====
+    let currentLat = 13.9892;
+    let currentLng = 100.6177;
+    let autoFollow = true;
+    let selectedStationId = null;
+
+    const map = L.map('map', {
+      zoomControl: false,
+      attributionControl: true
+    }).setView([currentLat, currentLng], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    const carIcon = L.divIcon({
+      className: '',
+      html: '<div class="car-dot"></div>',
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
+
+    const carMarker = L.marker([currentLat, currentLng], { icon: carIcon, zIndexOffset: 1000 }).addTo(map);
+    const stationLayer = L.layerGroup().addTo(map);
+    let routeLine = null;
+
+    map.on('dragstart', () => { autoFollow = false; });
+
+    document.getElementById('followBtn').addEventListener('click', () => {
+      autoFollow = true;
+      selectedStationId = null;
+      if (routeLine) { map.removeLayer(routeLine); routeLine = null; }
+      map.flyTo([currentLat, currentLng], 14, { animate: true, duration: 0.8 });
+    });
+
+    // ===== 4. ระบบสถานีชาร์จแบบ PlugShare (โหลดเพิ่มตามการเลื่อน/ซูมแผนที่) =====
+    const stationStore = new Map();
+    const markerStore = new Map();
+
+    const seedStations = [
+      { id: 's1', name: 'PTT EV Station PluZ รังสิต', lat: 13.9912, lng: 100.6155 },
+      { id: 's2', name: 'EA Anywhere ฟิวเจอร์พาร์ค รังสิต', lat: 13.9888, lng: 100.6182 },
+      { id: 's3', name: 'PEA VOLTA ปทุมธานี', lat: 14.0195, lng: 100.5284 },
+      { id: 's4', name: 'Altervim โลตัส รังสิต', lat: 13.9825, lng: 100.6110 },
+      { id: 's5', name: 'PTT EV Station PluZ คลองหลวง', lat: 14.0652, lng: 100.6418 },
+      { id: 's6', name: 'PEA VOLTA มธ.ศูนย์รังสิต', lat: 14.0725, lng: 100.6015 },
+      { id: 's7', name: 'PTT EV Station PluZ นวนคร', lat: 14.1240, lng: 100.6180 },
+      { id: 's8', name: 'PEA VOLTA วังน้อย อยุธยา', lat: 14.2285, lng: 100.7210 },
+      { id: 's9', name: 'PTT EV Station PluZ บางปะอิน', lat: 14.2450, lng: 100.5880 },
+      { id: 's10', name: 'EA Anywhere เซ็นทรัล อยุธยา', lat: 14.3315, lng: 100.6118 },
+      { id: 's11', name: 'PEA VOLTA อยุธยา (สายเอเชีย)', lat: 14.3780, lng: 100.5920 },
+      { id: 's12', name: 'PTT EV Station PluZ อ่างทอง', lat: 14.5890, lng: 100.4610 },
+      { id: 's13', name: 'PEA VOLTA สิงห์บุรี', lat: 14.8850, lng: 100.4020 },
+      { id: 's14', name: 'PTT EV Station PluZ ดอนเมือง', lat: 13.9180, lng: 100.6010 },
+      { id: 's15', name: 'EA Anywhere แจ้งวัฒนะ', lat: 13.9040, lng: 100.5290 },
+      { id: 's16', name: 'PEA VOLTA ปากเกร็ด นนทบุรี', lat: 13.9120, lng: 100.4950 },
+      { id: 's17', name: 'Tesla Supercharger เซ็นทรัล เวสต์เกต', lat: 13.8770, lng: 100.4110 },
+      { id: 's18', name: 'PTT EV Station PluZ ราชพฤกษ์', lat: 13.8250, lng: 100.4480 },
+      { id: 's19', name: 'EA Anywhere สยามพารากอน', lat: 13.7466, lng: 100.5347 },
+      { id: 's20', name: 'Tesla Supercharger เซ็นทรัลเวิลด์', lat: 13.7465, lng: 100.5391 },
+      { id: 's21', name: 'PEA VOLTA บางนา-ตราด', lat: 13.6580, lng: 100.6780 },
+      { id: 's22', name: 'PTT EV Station PluZ สุวรรณภูมิ', lat: 13.7190, lng: 100.7510 },
+      { id: 's23', name: 'PEA VOLTA สมุทรสาคร (พระราม 2)', lat: 13.5620, lng: 100.2750 },
+      { id: 's24', name: 'PEA VOLTA นครปฐม', lat: 13.8140, lng: 100.0620 },
+      { id: 's25', name: 'PTT EV Station PluZ สระบุรี', lat: 14.5280, lng: 100.9120 },
+      { id: 's26', name: 'PEA VOLTA ปากช่อง โคราช', lat: 14.6820, lng: 101.4150 },
+      { id: 's27', name: 'PEA VOLTA นครราชสีมา', lat: 14.9799, lng: 102.0978 },
+      { id: 's28', name: 'PEA VOLTA ขอนแก่น', lat: 16.4322, lng: 102.8236 },
+      { id: 's29', name: 'PTT EV Station PluZ สกลนคร', lat: 17.1610, lng: 104.1420 },
+      { id: 's30', name: 'PEA VOLTA สกลนคร', lat: 17.1545, lng: 104.1348 },
+      { id: 's31', name: 'PTT EV Station PluZ ธัญบุรี คลอง 6', lat: 14.0315, lng: 100.7320 },
+      { id: 's32', name: 'Altervim ลำลูกกา คลอง 4', lat: 13.9325, lng: 100.6840 }
+    ];
+
+    function getDistanceKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function selectStation(st) {
+      selectedStationId = st.id;
+      autoFollow = false;
+
+      document.querySelectorAll('.station-row').forEach(r => {
+        r.classList.toggle('active', r.dataset.id === st.id);
+      });
+
+      if (routeLine) map.removeLayer(routeLine);
+      routeLine = L.polyline([[currentLat, currentLng], [st.lat, st.lng]], {
+        color: '#38bdf8',
+        weight: 3,
+        dashArray: '6, 8'
+      }).addTo(map);
+
+      const targetZoom = Math.max(map.getZoom(), 14);
+      map.flyTo([st.lat, st.lng], targetZoom, { animate: true, duration: 0.9 });
+
+      const marker = markerStore.get(st.id);
+      if (marker) marker.openPopup();
+    }
+
+    function addStationToMap(st) {
+      if (stationStore.has(st.id)) return;
+      stationStore.set(st.id, st);
+
+      const stIcon = L.divIcon({
+        className: '',
+        html: `<div class="ev-pin">⚡</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      const marker = L.marker([st.lat, st.lng], { icon: stIcon }).addTo(stationLayer);
+
+      marker.on('click', () => {
+        const dist = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
+        marker.bindPopup(`
+          <div style="font-family:'Kanit',sans-serif;color:#111;min-width:175px;">
+            <div style="font-weight:600;font-size:14px;">⚡ ${st.name}</div>
+            <div style="color:#0284c7;font-size:12px;margin:2px 0 6px;">ห่างจากรถ ${dist} km</div>
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${st.lat},${st.lng}" target="_blank"
+               style="display:inline-block;background:#0284c7;color:#fff;text-decoration:none;padding:4px 10px;border-radius:5px;font-size:12px;">
+               🗺️ นำทาง Google Maps
+            </a>
+          </div>
+        `).openPopup();
+
+        selectedStationId = st.id;
+        autoFollow = false;
+        if (routeLine) map.removeLayer(routeLine);
+        routeLine = L.polyline([[currentLat, currentLng], [st.lat, st.lng]], {
+          color: '#38bdf8',
+          weight: 3,
+          dashArray: '6, 8'
+        }).addTo(map);
+      });
+
+      markerStore.set(st.id, marker);
+    }
+
+    function refreshVisibleStationList() {
+      const bounds = map.getBounds();
+      const allStations = Array.from(stationStore.values());
+
+      let inView = allStations.filter(st => bounds.contains([st.lat, st.lng]));
+      if (inView.length < 4) {
+        const center = map.getCenter();
+        inView = allStations
+          .slice()
+          .sort((a, b) => getDistanceKm(center.lat, center.lng, a.lat, a.lng) - getDistanceKm(center.lat, center.lng, b.lat, b.lng))
+          .slice(0, 12);
+      }
+
+      inView.sort((a, b) => getDistanceKm(currentLat, currentLng, a.lat, a.lng) - getDistanceKm(currentLat, currentLng, b.lat, b.lng));
+
+      const listEl = document.getElementById('stationsList');
+      listEl.innerHTML = '';
+
+      inView.slice(0, 35).forEach(st => {
+        const dist = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
+        const row = document.createElement('div');
+        row.className = 'station-row' + (st.id === selectedStationId ? ' active' : '');
+        row.dataset.id = st.id;
+        row.innerHTML = `
+          <div class="station-name"><span class="bolt-icon">⚡</span> ${st.name}</div>
+          <div class="station-dist">${dist}km</div>
+        `;
+        row.addEventListener('click', () => {
+          const distNow = getDistanceKm(currentLat, currentLng, st.lat, st.lng).toFixed(1);
+          const m = markerStore.get(st.id);
+          if (m) {
+            m.bindPopup(`
+              <div style="font-family:'Kanit',sans-serif;color:#111;min-width:175px;">
+                <div style="font-weight:600;font-size:14px;">⚡ ${st.name}</div>
+                <div style="color:#0284c7;font-size:12px;margin:2px 0 6px;">ห่างจากรถ ${distNow} km</div>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${st.lat},${st.lng}" target="_blank"
+                   style="display:inline-block;background:#0284c7;color:#fff;text-decoration:none;padding:4px 10px;border-radius:5px;font-size:12px;">
+                   🗺️ นำทาง Google Maps
+                </a>
+              </div>
+            `);
+          }
+          selectStation(st);
+        });
+        listEl.appendChild(row);
+      });
+
+      document.getElementById('stationStatus').textContent = `ในแผนที่ ${inView.length} จุด`;
+    }
+
+    let fetchTimer = null;
+    async function fetchStationsInView() {
+      const bounds = map.getBounds();
+      const s = bounds.getSouth(), w = bounds.getWest(), n = bounds.getNorth(), e = bounds.getEast();
+
+      if ((n - s) > 2.5 || (e - w) > 2.5) {
+        refreshVisibleStationList();
+        return;
+      }
+
+      document.getElementById('stationStatus').textContent = 'กำลังค้นหาเพิ่ม...';
+      const query = `[out:json][timeout:10];(node["amenity"="charging_station"](${s},${w},${n},${e});way["amenity"="charging_station"](${s},${w},${n},${e}););out center 80;`;
+
+      try {
+        const res = await fetch('https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query));
+        const data = await res.json();
+        if (data && data.elements) {
+          data.elements.forEach(el => {
+            const lat = el.lat || (el.center && el.center.lat);
+            const lng = el.lon || (el.center && el.center.lon);
+            if (!lat || !lng) return;
+
+            const tags = el.tags || {};
+            const name = tags['name:th'] || tags.name || tags.brand || tags.operator || 'สถานีชาร์จ EV';
+            addStationToMap({
+              id: 'osm_' + el.id,
+              name: name,
+              lat: lat,
+              lng: lng
+            });
+          });
+        }
+      } catch (err) {}
+      refreshVisibleStationList();
+    }
+
+    seedStations.forEach(addStationToMap);
+    refreshVisibleStationList();
+    fetchStationsInView();
+
+    map.on('moveend', () => {
+      refreshVisibleStationList();
+      clearTimeout(fetchTimer);
+      fetchTimer = setTimeout(fetchStationsInView, 450);
+    });
+
+    // ===== 5. ระบบคำนวณความเร็ว คะแนนขับขี่ และ GPS =====
+    let maxSpeed = 0;
+    let driveScore = 100;
+    let hardAccel = 0, hardBrake = 0, hardTurn = 0;
+    let prevSpeedMps = 0, prevTime = Date.now(), prevHeading = null;
+    let speedLimit = 120;
+
+    function updateTelemetry(speedKmh, accelMps2, heading) {
+      const roundedSpeed = Math.max(0, Math.round(speedKmh));
+      document.getElementById('speedVal').textContent = roundedSpeed;
+
+      const sign = accelMps2 >= 0 ? '+' : '';
+      document.getElementById('accelVal').textContent = `${sign}${accelMps2.toFixed(2)} m/s²`;
+
+      if (roundedSpeed > maxSpeed) {
+        maxSpeed = roundedSpeed;
+        document.getElementById('maxSpeedVal').textContent = maxSpeed;
+      }
+
+      if (accelMps2 > 3.2) {
+        hardAccel++;
+        driveScore = Math.max(0, driveScore - 2);
+        document.getElementById('hardAccelVal').textContent = hardAccel;
+      } else if (accelMps2 < -3.5) {
+        hardBrake++;
+        driveScore = Math.max(0, driveScore - 2);
+        document.getElementById('hardBrakeVal').textContent = hardBrake;
+      }
+
+      if (heading !== null && !isNaN(heading)) {
+        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const dirText = dirs[Math.round(heading / 45) % 8];
+        document.getElementById('headingVal').textContent = `${dirText} ${Math.round(heading)}°`;
+        document.getElementById('compassNeedle').style.transform = `rotate(${heading}deg)`;
+
+        if (prevHeading !== null && roundedSpeed > 20) {
+          let diff = Math.abs(heading - prevHeading);
+          if (diff > 180) diff = 360 - diff;
+          if (diff > 35) {
+            hardTurn++;
+            driveScore = Math.max(0, driveScore - 2);
+            document.getElementById('hardTurnVal').textContent = hardTurn;
+          }
+        }
+        prevHeading = heading;
+      }
+
+      document.getElementById('scoreVal').textContent = driveScore;
+      document.getElementById('scoreBar').style.width = `${driveScore}%`;
+      document.getElementById('scoreText').textContent = driveScore >= 85 ? 'นุ่มมาก' : (driveScore >= 60 ? 'ปกติ' : 'ซิ่ง');
+
+      updateEnginePitch(roundedSpeed);
+    }
+
+    if ('geolocation' in navigator) {
+      navigator.geolocation.watchPosition((pos) => {
+        const { latitude, longitude, accuracy, speed, heading } = pos.coords;
+
+        const isInThailandRegion = (latitude >= 5 && latitude <= 21 && longitude >= 97 && longitude <= 106);
+        if (isInThailandRegion) {
+          currentLat = latitude;
+          currentLng = longitude;
+          carMarker.setLatLng([currentLat, currentLng]);
+          if (autoFollow) map.setView([currentLat, currentLng]);
+        }
+
+        document.getElementById('gpsText').textContent = `GPS ±${Math.round(accuracy)}m`;
+
+        const now = Date.now();
+        const dt = Math.max(0.5, (now - prevTime) / 1000);
+        const spdMps = speed || 0;
+        const accel = (spdMps - prevSpeedMps) / dt;
+        prevSpeedMps = spdMps;
+        prevTime = now;
+
+        updateTelemetry(spdMps * 3.6, accel, heading);
+      }, () => {
+        document.getElementById('gpsText').textContent = 'GPS รอสัญญาณ';
+      }, { enableHighAccuracy: true, maximumAge: 1000 });
+    }
+
+    // ===== 6. ระบบเสียงเครื่องยนต์จำลอง =====
+    let audioCtx = null;
+    let osc = null;
+    let gainNode = null;
+    let soundOn = false;
+
+    function updateEnginePitch(speedKmh) {
+      if (!soundOn || !osc || !audioCtx) return;
+      const type = document.getElementById('engineSelect').value;
+      const baseFreq = type === 'v12' ? 65 : (type === 'v8' ? 50 : (type === 'gt3' ? 58 : 110));
+      osc.frequency.setTargetAtTime(baseFreq + speedKmh * 2.2, audioCtx.currentTime, 0.1);
+    }
+
+    document.getElementById('soundBtn').addEventListener('click', function() {
+      soundOn = !soundOn;
+      this.classList.toggle('active', soundOn);
+      if (soundOn) {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        osc = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.value = 65;
+        gainNode.gain.value = 0.06;
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.start();
+      } else if (osc) {
+        osc.stop();
+        osc.disconnect();
+        osc = null;
+      }
+    });
+
+    document.getElementById('limitMinus').addEventListener('click', () => {
+      speedLimit = Math.max(40, speedLimit - 10);
+      document.getElementById('limitVal').textContent = speedLimit;
+    });
+    document.getElementById('limitPlus').addEventListener('click', () => {
+      speedLimit = Math.min(200, speedLimit + 10);
+      document.getElementById('limitVal').textContent = speedLimit;
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      maxSpeed = 0;
+      driveScore = 100;
+      hardAccel = 0; hardBrake = 0; hardTurn = 0;
+      document.getElementById('maxSpeedVal').textContent = '0';
+      document.getElementById('zeroToHundredVal').textContent = '--';
+      document.getElementById('scoreVal').textContent = '100';
+      document.getElementById('scoreBar').style.width = '100%';
+      document.getElementById('scoreText').textContent = 'นุ่มมาก';
+      document.getElementById('hardAccelVal').textContent = '0';
+      document.getElementById('hardBrakeVal').textContent = '0';
+      document.getElementById('hardTurnVal').textContent = '0';
+    });
+  </script>
+
+  <style>
+    body > *:not(header):not(main):not(footer):not(script):not(style):not(link) {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  </style>
+  <script>
+    (function removeNetlifyBadge() {
+      const clean = () => {
+        Array.from(document.body.children).forEach(el => {
+          if (!['HEADER', 'MAIN', 'FOOTER', 'SCRIPT', 'STYLE', 'LINK'].includes(el.tagName)) {
+            el.remove();
+          }
+        });
+      };
+      clean();
+      new MutationObserver(clean).observe(document.body, { childList: true });
+    })();
+  </script>
+
+  <script>
+    (function upgradeAtto1Speedometer() {
+      const svg = document.getElementById('gaugeSvg');
+      const ticksGroup = document.getElementById('gaugeTicks');
+      const speedEl = document.getElementById('speedVal');
+      if (!svg || !ticksGroup || !speedEl) return;
+
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+      const cx = 130, cy = 130, maxSpeedGauge = 160;
+
+      let defs = svg.querySelector('defs');
+      if (!defs) {
+        defs = document.createElementNS(SVG_NS, 'defs');
+        svg.prepend(defs);
+      }
+
+      const grad = document.createElementNS(SVG_NS, 'linearGradient');
+      grad.setAttribute('id', 'attoOuterSpeedGrad');
+      grad.setAttribute('gradientUnits', 'userSpaceOnUse');
+      grad.setAttribute('x1', '20');
+      grad.setAttribute('y1', '190');
+      grad.setAttribute('x2', '240');
+      grad.setAttribute('y2', '190');
+      grad.innerHTML = `
+        <stop offset="0%" stop-color="#10b981" />
+        <stop offset="35%" stop-color="#22c55e" />
+        <stop offset="60%" stop-color="#facc15" />
+        <stop offset="82%" stop-color="#f97316" />
+        <stop offset="100%" stop-color="#ef4444" />
+      `;
+      defs.appendChild(grad);
+
+      const rArc = 130;
+      const startRad = (-210 * Math.PI) / 180;
+      const endRad = (30 * Math.PI) / 180;
+      const xStart = (cx + rArc * Math.cos(startRad)).toFixed(2);
+      const yStart = (cy + rArc * Math.sin(startRad)).toFixed(2);
+      const xEnd = (cx + rArc * Math.cos(endRad)).toFixed(2);
+      const yEnd = (cy + rArc * Math.sin(endRad)).toFixed(2);
+      const arcPathData = `M ${xStart} ${yStart} A ${rArc} ${rArc} 0 1 1 ${xEnd} ${yEnd}`;
+
+      const bgTrack = document.createElementNS(SVG_NS, 'path');
+      bgTrack.setAttribute('d', arcPathData);
+      bgTrack.setAttribute('fill', 'none');
+      bgTrack.setAttribute('stroke', '#161b24');
+      bgTrack.setAttribute('stroke-width', '23');
+      bgTrack.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(bgTrack);
+
+      const activeArc = document.createElementNS(SVG_NS, 'path');
+      activeArc.setAttribute('d', arcPathData);
+      activeArc.setAttribute('fill', 'none');
+      activeArc.setAttribute('stroke', 'url(#attoOuterSpeedGrad)');
+      activeArc.setAttribute('stroke-width', '23');
+      activeArc.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(activeArc);
+
+      const tipDot = document.createElementNS(SVG_NS, 'circle');
+      tipDot.setAttribute('cx', xStart);
+      tipDot.setAttribute('cy', yStart);
+      tipDot.setAttribute('r', '7.5');
+      tipDot.setAttribute('fill', '#10b981');
+      svg.appendChild(tipDot);
+
+      const arcLength = activeArc.getTotalLength();
+      activeArc.style.strokeDasharray = `${arcLength}`;
+      activeArc.style.strokeDashoffset = `${arcLength}`;
+
+      function getSpeedColor(spd) {
+        if (spd < 45) return '#10b981';
+        if (spd < 80) return '#84cc16';
+        if (spd < 105) return '#facc15';
+        if (spd < 130) return '#f97316';
+        return '#ef4444';
+      }
+
+      const tickLines = Array.from(ticksGroup.querySelectorAll('line'));
+      const tickTexts = Array.from(ticksGroup.querySelectorAll('text'));
+
+      let targetSpeed = 0;
+      let currentSpeed = 0;
+
+      function renderGaugeFrame() {
+        const diff = targetSpeed - currentSpeed;
+        if (Math.abs(diff) > 0.08) {
+          currentSpeed += diff * 0.18;
+        } else {
+          currentSpeed = targetSpeed;
+        }
+
+        const clamped = Math.max(0, Math.min(maxSpeedGauge, currentSpeed));
+        const ratio = clamped / maxSpeedGauge;
+        const color = getSpeedColor(clamped);
+
+        speedEl.textContent = Math.round(currentSpeed);
+        speedEl.style.textShadow = clamped > 2 ? `0 0 18px ${color}55` : 'none';
+
+        activeArc.style.strokeDashoffset = `${arcLength * (1 - ratio)}`;
+        activeArc.style.filter = `drop-shadow(0 0 6px ${color}88)`;
+
+        const deg = -210 + ratio * 240;
+        const rad = (deg * Math.PI) / 180;
+        tipDot.setAttribute('cx', (cx + rArc * Math.cos(rad)).toFixed(2));
+        tipDot.setAttribute('cy', (cy + rArc * Math.sin(rad)).toFixed(2));
+        tipDot.setAttribute('fill', color);
+        tipDot.style.filter = `drop-shadow(0 0 6px ${color})`;
+
+        tickLines.forEach((line, idx) => {
+          const tickSpeed = idx * 10;
+          if (clamped >= tickSpeed && clamped > 0) {
+            line.setAttribute('stroke', getSpeedColor(tickSpeed));
+            line.setAttribute('stroke-width', idx % 2 === 0 ? '3' : '2');
+          } else {
+            line.setAttribute('stroke', tickSpeed >= 140 ? '#ef4444' : '#4b5563');
+            line.setAttribute('stroke-width', idx % 2 === 0 ? '2.5' : '1.5');
+          }
+        });
+
+        tickTexts.forEach((txt, idx) => {
+          const textSpeed = idx * 20;
+          if (clamped >= textSpeed && clamped > 0) {
+            txt.setAttribute('fill', '#ffffff');
+          } else {
+            txt.setAttribute('fill', '#6b7280');
+          }
+        });
+
+        requestAnimationFrame(renderGaugeFrame);
+      }
+      requestAnimationFrame(renderGaugeFrame);
+
+      let lastGpsLat = null, lastGpsLng = null, lastGpsTime = null;
+      let isDemoSweeping = false;
+
+      const origUpdateTelemetry = window.updateTelemetry;
+      if (typeof origUpdateTelemetry === 'function') {
+        window.updateTelemetry = function(speedKmh, accelMps2, heading) {
+          if (!isDemoSweeping) {
+            targetSpeed = Math.max(0, speedKmh || 0);
+          }
+          return origUpdateTelemetry.apply(this, arguments);
+        };
+      }
+
+      if ('geolocation' in navigator) {
+        navigator.geolocation.watchPosition((pos) => {
+          if (isDemoSweeping) return;
+          const { latitude, longitude, speed } = pos.coords;
+          const now = Date.now();
+          let calcKmh = (speed !== null && !isNaN(speed)) ? speed * 3.6 : 0;
+
+          if (calcKmh === 0 && lastGpsLat !== null && lastGpsTime !== null) {
+            const dt = (now - lastGpsTime) / 1000;
+            if (dt >= 0.5 && dt < 10) {
+              const distKm = getDistanceKm(lastGpsLat, lastGpsLng, latitude, longitude);
+              const fallbackKmh = (distKm / dt) * 3600;
+              if (fallbackKmh >= 2 && fallbackKmh <= 200) {
+                calcKmh = fallbackKmh;
+              }
+            }
+          }
+          lastGpsLat = latitude;
+          lastGpsLng = longitude;
+          lastGpsTime = now;
+          targetSpeed = calcKmh;
+        }, () => {}, { enableHighAccuracy: true, maximumAge: 500 });
+      }
+
+      const wrapper = document.querySelector('.gauge-wrapper');
+      if (wrapper) {
+        wrapper.style.cursor = 'pointer';
+        wrapper.title = 'คลิกเพื่อทดสอบกวาดเรือนไมล์ 0-160 km/h';
+        wrapper.addEventListener('click', () => {
+          if (isDemoSweeping) return;
+          isDemoSweeping = true;
+          let demoSpd = 0;
+          let dir = 1;
+          const timer = setInterval(() => {
+            demoSpd += dir * 4;
+            if (demoSpd >= 160) { demoSpd = 160; dir = -1; }
+            if (demoSpd <= 0 && dir === -1) {
+              demoSpd = 0;
+              clearInterval(timer);
+              isDemoSweeping = false;
+            }
+            targetSpeed = demoSpd;
+            if (typeof origUpdateTelemetry === 'function') {
+              origUpdateTelemetry(demoSpd, dir * 1.5, null);
+            }
+          }, 30);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
