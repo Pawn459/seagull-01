@@ -55,7 +55,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 42px;
+      height: 34px;
       flex-shrink: 0;
     }
 
@@ -133,7 +133,8 @@
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 14px;
+      padding: 10px;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -166,9 +167,9 @@
       justify-content: space-between;
     }
 
-    .gauge-container {
+   .gauge-container {
       flex: 1;
-      min-height: 0; /* สำคัญมาก: ยอมให้ Flexbox หดตัวลงได้เมื่อจอเตี้ย */
+      min-height: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -176,8 +177,8 @@
     }
 
     .gauge-wrapper {
-     width: min(210px, 34vh);  /* ย่อขนาดอัตโนมัติตามความสูงจอ */
-     height: min(210px, 34vh);
+      width: min(210px, 34vh);
+      height: min(210px, 34vh);
       position: relative;
       display: flex;
       align-items: center;
@@ -453,7 +454,7 @@
 
     /* ===== BOTTOM BAR ===== */
     .bottom-bar {
-      height: 54px;
+      height: 45px;
       flex-shrink: 0;
       display: grid;
       grid-template-columns: 1fr 1.35fr 1fr;
