@@ -110,7 +110,7 @@
 
     .clock-time {
       font-family: 'Orbitron', sans-serif;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 800;
       color: #ffffff;
     }
@@ -129,7 +129,7 @@
       min-height: 0;
     }
 
-   .panel {
+    .panel {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
@@ -177,8 +177,8 @@
     }
 
     .gauge-wrapper {
-      width: min(210px, 34vh);
-      height: min(210px, 34vh);
+      width: min(220px, 38vh);
+      height: min(220px, 38vh);
       position: relative;
       display: flex;
       align-items: center;
@@ -204,7 +204,7 @@
     .speed-value {
       font-family: 'Orbitron', sans-serif;
       font-style: italic;
-      font-size: clamp(44px, 8vh, 64px); /* ปรับขนาดตัวเลขความเร็วตามสัดส่วน */
+      font-size: clamp(44px, 8vh, 64px);
       font-weight: 800;
       line-height: 0.95;
       color: #ffffff;
@@ -236,7 +236,7 @@
       background-color: var(--bg-subcard);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 8px 10px;
+      padding: 6px 10px;
     }
 
     .sub-card-label {
@@ -247,7 +247,7 @@
 
     .sub-card-val {
       font-family: 'Orbitron', sans-serif;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #ffffff;
       margin-top: 2px;
@@ -337,7 +337,7 @@
     .right-col {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       min-height: 0;
     }
 
@@ -350,12 +350,12 @@
       display: flex;
       align-items: baseline;
       gap: 10px;
-      margin: 6px 0;
+      margin: 4px 0;
     }
 
     .score-number {
       font-family: 'Orbitron', sans-serif;
-      font-size: 54px;
+      font-size: clamp(38px, 7vh, 52px);
       font-weight: 800;
       color: var(--accent-green);
       line-height: 1;
@@ -369,11 +369,11 @@
 
     .score-bar-bg {
       width: 100%;
-      height: 8px;
+      height: 7px;
       background: #181c24;
       border-radius: 99px;
       overflow: hidden;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .score-bar-fill {
@@ -392,7 +392,7 @@
     }
 
     .stations-list {
-      margin-top: 8px;
+      margin-top: 6px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -414,7 +414,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 8px;
+      padding: 6px 8px;
       border-bottom: 1px solid #161a22;
       cursor: pointer;
       border-radius: 6px;
@@ -574,7 +574,7 @@
     }
 
     @media (max-width: 900px) {
-      body { overflow-y: auto; height: auto; }
+      html, body { overflow-y: auto; height: auto; }
       .main-grid { grid-template-columns: 1fr; }
       .map-panel { height: 340px; }
       .bottom-bar { grid-template-columns: 1fr; height: auto; }
@@ -697,8 +697,8 @@
       <!-- กล่องเข็มทิศทรงปาดมุม -->
       <div style="flex:0.95;position:relative;height:100%;background:#222834;padding:1px;clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));border-radius:10px 0 10px 0;">
         <div style="position:absolute;top:0;left:0;width:48%;height:3.5px;background:#ff3b47;z-index:5;"></div>
-        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;gap:12px;padding:3px 12px 0 10px;">
-          <svg viewBox="0 0 52 52" style="width:40px;height:40px;flex-shrink:0;">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;gap:10px;padding:2px 10px 0 8px;">
+          <svg viewBox="0 0 52 52" style="width:34px;height:34px;flex-shrink:0;">
             <circle cx="26" cy="26" r="24" fill="#07090d" stroke="#262c3a" stroke-width="1.5" />
             <text x="26" y="10.5" fill="#ff3b47" font-family="'Orbitron',sans-serif" font-size="7.5" font-weight="800" text-anchor="middle">N</text>
             <text x="26" y="46.5" fill="#6b7280" font-family="'Orbitron',sans-serif" font-size="7" font-weight="700" text-anchor="middle">S</text>
@@ -709,8 +709,8 @@
             </g>
           </svg>
           <div>
-            <div style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">เข็มทิศ</div>
-            <div class="env-val" id="headingVal" style="font-size:16px;letter-spacing:1px;">--</div>
+            <div style="font-size:10px;color:#8b95a5;line-height:1.1;margin-bottom:1px;">เข็มทิศ</div>
+            <div class="env-val" id="headingVal" style="font-size:14px;letter-spacing:1px;">--</div>
           </div>
         </div>
       </div>
@@ -718,19 +718,19 @@
       <!-- กล่องสภาพอากาศและ PM2.5 ทรงปาดมุม -->
       <div style="flex:1.35;position:relative;height:100%;background:#222834;padding:1px;clip-path:polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));border-radius:10px 0 10px 0;">
         <div style="position:absolute;top:0;left:0;width:48%;height:3.5px;background:#ff3b47;z-index:5;"></div>
-        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;justify-content:space-between;padding:3px 14px 0 12px;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <svg viewBox="0 0 24 24" fill="#e5e7eb" style="width:24px;height:24px;flex-shrink:0;">
+        <div style="width:100%;height:100%;background:linear-gradient(180deg,#11151d 0%,#0a0c10 100%);clip-path:polygon(0 0, calc(100% - 11.5px) 0, 100% 11.5px, 100% 100%, 11.5px 100%, 0 calc(100% - 11.5px));border-radius:9px 0 9px 0;display:flex;align-items:center;justify-content:space-between;padding:2px 12px 0 10px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <svg viewBox="0 0 24 24" fill="#e5e7eb" style="width:22px;height:22px;flex-shrink:0;">
               <path d="M17.5 19H7a5 5 0 0 1-.7-9.95A6.5 6.5 0 0 1 19 9.5a4.5 4.5 0 0 1-1.5 9.5z"/>
             </svg>
             <div>
-              <div id="weatherDesc" style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">เมฆมาก</div>
-              <div class="env-val" id="tempVal" style="font-size:18px;font-weight:800;">31°</div>
+              <div id="weatherDesc" style="font-size:10px;color:#8b95a5;line-height:1.1;margin-bottom:1px;">เมฆมาก</div>
+              <div class="env-val" id="tempVal" style="font-size:16px;font-weight:800;">31°</div>
             </div>
           </div>
           <div>
-            <div style="font-size:11px;color:#8b95a5;line-height:1.1;margin-bottom:2px;">PM2.5</div>
-            <div class="pm-val" id="pmVal" style="font-size:19px;font-weight:800;color:#22c55e;">22</div>
+            <div style="font-size:10px;color:#8b95a5;line-height:1.1;margin-bottom:1px;">PM2.5</div>
+            <div class="pm-val" id="pmVal" style="font-size:17px;font-weight:800;color:#22c55e;">22</div>
           </div>
         </div>
       </div>
@@ -837,7 +837,7 @@
       map.flyTo([currentLat, currentLng], 14, { animate: true, duration: 0.8 });
     });
 
-    // ===== 4. ระบบสถานีชาร์จแบบ PlugShare (โหลดเพิ่มตามการเลื่อน/ซูมแผนที่) =====
+    // ===== 4. ระบบสถานีชาร์จแบบ PlugShare =====
     const stationStore = new Map();
     const markerStore = new Map();
 
@@ -1179,28 +1179,6 @@
       document.getElementById('hardBrakeVal').textContent = '0';
       document.getElementById('hardTurnVal').textContent = '0';
     });
-  </script>
-
-  <style>
-    body > *:not(header):not(main):not(footer):not(script):not(style):not(link) {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-  </style>
-  <script>
-    (function removeNetlifyBadge() {
-      const clean = () => {
-        Array.from(document.body.children).forEach(el => {
-          if (!['HEADER', 'MAIN', 'FOOTER', 'SCRIPT', 'STYLE', 'LINK'].includes(el.tagName)) {
-            el.remove();
-          }
-        });
-      };
-      clean();
-      new MutationObserver(clean).observe(document.body, { childList: true });
-    })();
   </script>
 
   <script>
